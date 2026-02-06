@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import {
   Package,
   Plus,
@@ -12,6 +11,21 @@ import {
   Eye,
   Sparkles,
   Send,
+  ChevronDown,
+  Paintbrush,
+  MessageSquare,
+  HelpCircle,
+  QrCode,
+  Clock,
+  FileText,
+  ScrollText,
+  Boxes,
+  Wrench,
+  CreditCard,
+  Gift,
+  UserPlus,
+  UserMinus,
+  ArrowRightLeft,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -71,28 +85,59 @@ import {
 } from "@/lib/api/store";
 import { useTenant } from "@/lib/tenant";
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.06,
-      delayChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: [0.25, 0.46, 0.45, 0.94] as const,
-    },
-  },
-};
+/* ─── Collapsible Section ─── */
+function CollapsibleSection({
+  icon: Icon,
+  title,
+  description,
+  defaultOpen = false,
+  children,
+}: {
+  icon: React.ElementType;
+  title: string;
+  description?: string;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.015] overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-3 w-full px-5 py-4 text-left hover:bg-white/[0.03] transition-colors duration-150"
+      >
+        <div className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center flex-shrink-0">
+          <Icon className="w-4 h-4 text-muted-foreground" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium">{title}</p>
+          {description && (
+            <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
+          )}
+        </div>
+        <ChevronDown
+          className={cn(
+            "w-4 h-4 text-muted-foreground transition-transform duration-200",
+            open && "rotate-180"
+          )}
+        />
+      </button>
+      <div
+        className={cn(
+          "grid transition-[grid-template-rows] duration-200 ease-out",
+          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+        )}
+      >
+        <div className="overflow-hidden">
+          <div className="px-5 pb-5 pt-1 space-y-4">
+            {children}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function StorePage() {
   const { tenantId } = useTenant();
@@ -750,1052 +795,654 @@ export default function StorePage() {
   }
 
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
-      <motion.div variants={itemVariants}>
+    <div className="space-y-6 animate-fade-in">
+      <div>
         <h1 className="text-2xl font-semibold tracking-tight">Loja</h1>
         <p className="text-muted-foreground text-sm mt-1">
           Gerencie produtos, clientes e configurações da loja
         </p>
-      </motion.div>
+      </div>
 
-      <motion.div variants={itemVariants}>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-white/[0.03] border border-white/5 p-1.5 rounded-xl flex-wrap h-auto gap-1">
-            {[
-              { value: "products", icon: Package, label: "Produtos" },
-              { value: "customization", icon: SettingsIcon, label: "Personalização" },
-              { value: "preferences", icon: SettingsIcon, label: "Preferências" },
-              { value: "customers", icon: Users, label: "Clientes" },
-              { value: "balance", icon: Wallet, label: "Saldo & Cashback" },
-            ].map((tab) => (
-              <TabsTrigger
-                key={tab.value}
-                value={tab.value}
-                className="rounded-lg data-[state=active]:bg-white/10 transition-all duration-200"
-              >
-                <tab.icon className="w-4 h-4 mr-2" />
-                {tab.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="bg-white/[0.03] border border-white/[0.06] p-1 rounded-xl flex-wrap h-auto gap-1">
+          {[
+            { value: "products", icon: Package, label: "Produtos" },
+            { value: "customization", icon: Paintbrush, label: "Personalização" },
+            { value: "preferences", icon: SettingsIcon, label: "Preferências" },
+            { value: "customers", icon: Users, label: "Clientes" },
+            { value: "balance", icon: Wallet, label: "Saldo & Cashback" },
+          ].map((tab) => (
+            <TabsTrigger
+              key={tab.value}
+              value={tab.value}
+              className="rounded-lg data-[state=active]:bg-white/10 transition-colors duration-150 gap-2"
+            >
+              <tab.icon className="w-4 h-4" />
+              {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
-          <TabsContent value="products">
-            <GlassCard className="p-5" hover={false}>
-              <SectionHeader
-                title="Produtos"
-                description={`${products.length} produtos cadastrados`}
-                actions={
-                  <div className="flex items-center gap-3">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <TabsContent value="products">
+          <GlassCard className="p-5" hover={false}>
+            <SectionHeader
+              title="Produtos"
+              description={`${products.length} produtos cadastrados`}
+              actions={
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <input
+                      type="text"
+                      placeholder="Buscar produto..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-9 pr-3 py-2.5 text-sm rounded-xl bg-white/[0.03] border border-white/[0.08] outline-none focus:border-white/20 transition-colors duration-150 w-48"
+                    />
+                  </div>
+                  <GlassButton size="sm" onClick={handleNewProduct}>
+                    <Plus className="w-4 h-4" />
+                    Novo produto
+                  </GlassButton>
+                </div>
+              }
+            />
+
+            {productError && (
+              <p className="text-sm text-destructive mb-3">{productError}</p>
+            )}
+
+            <DataTable
+              columns={[
+                {
+                  key: "name",
+                  header: "Produto",
+                  render: (item) => (
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-white/[0.06] flex items-center justify-center flex-shrink-0">
+                        <Package className="w-5 h-5 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <p className="font-medium">{item.name}</p>
+                        <p className="text-xs text-muted-foreground font-mono">{item.id}</p>
+                      </div>
+                    </div>
+                  ),
+                },
+                {
+                  key: "price",
+                  header: "Preço",
+                  render: (item) => (
+                    <span className="font-medium">
+                      {item.min_price === item.max_price
+                        ? formatCurrency(item.min_price)
+                        : `${formatCurrency(item.min_price)} - ${formatCurrency(item.max_price)}`}
+                    </span>
+                  ),
+                },
+                {
+                  key: "stock",
+                  header: "Estoque",
+                  render: (item) => (
+                    <span
+                      className={cn(
+                        "font-medium px-2.5 py-1 rounded-lg text-xs",
+                        item.has_infinite_stock && "text-success bg-success/10",
+                        item.stock_total !== null && item.stock_total < 5 && "text-warning bg-warning/10",
+                        item.stock_total === 0 && "text-destructive bg-destructive/10"
+                      )}
+                    >
+                      {item.has_infinite_stock ? "Ilimitado" : item.stock_total ?? "—"}
+                    </span>
+                  ),
+                },
+                {
+                  key: "sales",
+                  header: "Vendas",
+                  render: (item) => (
+                    <span className="font-medium">{item.info?.purchasesIds?.length || 0}</span>
+                  ),
+                },
+                {
+                  key: "active",
+                  header: "Status",
+                  render: (item) => (
+                    <span
+                      className={cn(
+                        "px-2.5 py-1 rounded-lg text-xs font-medium inline-flex items-center gap-1.5",
+                        item.info?.active !== false
+                          ? "bg-success/15 text-success"
+                          : "bg-white/[0.04] text-muted-foreground"
+                      )}
+                    >
+                      {item.info?.active !== false && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                      )}
+                      {item.info?.active !== false ? "Ativo" : "Inativo"}
+                    </span>
+                  ),
+                },
+                {
+                  key: "actions",
+                  header: "",
+                  render: (item) => (
+                    <div className="flex items-center gap-0.5">
+                      <button
+                        className="p-2 rounded-lg hover:bg-white/[0.06] transition-colors duration-150 active:scale-95"
+                        onClick={() => handleEditProduct(item)}
+                        title="Visualizar"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button
+                        className="p-2 rounded-lg hover:bg-white/[0.06] transition-colors duration-150 active:scale-95"
+                        onClick={() => handleEditProduct(item)}
+                        title="Editar"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        className="p-2 rounded-lg hover:bg-white/[0.06] transition-colors duration-150 active:scale-95"
+                        onClick={() => handleDuplicateProduct(item.id)}
+                        title="Duplicar"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                      </button>
+                      <button
+                        className="p-2 rounded-lg hover:bg-white/[0.06] transition-colors duration-150 active:scale-95"
+                        onClick={() => handleOpenSend(item)}
+                        title="Enviar"
+                      >
+                        <Send className="w-4 h-4" />
+                      </button>
+                      <button
+                        className="p-2 rounded-lg hover:bg-white/[0.06] transition-colors duration-150 text-destructive active:scale-95"
+                        onClick={() => handleRequestDelete(item)}
+                        title="Excluir"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ),
+                  className: "w-36",
+                },
+              ]}
+              data={filteredProducts}
+              keyExtractor={(item) => item.id}
+              emptyMessage={loading ? "Carregando..." : "Nenhum produto encontrado"}
+            />
+          </GlassCard>
+        </TabsContent>
+
+        <TabsContent value="customization">
+          <GlassCard className="p-5" hover={false}>
+            <SectionHeader
+              title="Personalização"
+              description="Configure mensagens e aparência da loja"
+              actions={
+                <GlassButton size="sm" onClick={handleCustomizationSave} disabled={customizationSaving}>
+                  {customizationSaving ? "Salvando..." : "Salvar alterações"}
+                </GlassButton>
+              }
+            />
+            {customizationError && (
+              <p className="text-sm text-destructive mb-3">{customizationError}</p>
+            )}
+            {customizationLoading || !customization ? (
+              <p className="text-sm text-muted-foreground">Carregando...</p>
+            ) : (
+              <div className="space-y-3">
+                {/* Purchase Event */}
+                <CollapsibleSection
+                  icon={Paintbrush}
+                  title="Evento de Compra"
+                  description="Cor e imagem exibidos ao finalizar uma compra"
+                  defaultOpen
+                >
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Cor do Evento</label>
+                      <ColorPicker
+                        value={customization.purchase_event.color || ""}
+                        onChange={(value) =>
+                          setCustomization((prev) =>
+                            prev
+                              ? { ...prev, purchase_event: { ...prev.purchase_event, color: value } }
+                              : prev
+                          )
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Imagem do Evento</label>
+                      <div className="flex items-center gap-3">
+                        <label className="cursor-pointer">
+                          <input type="file" accept="image/*" onChange={(e) => handleCustomizationImage("purchase_event", e)} className="hidden" />
+                          <div className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-sm hover:bg-white/[0.06] transition-colors duration-150">
+                            Enviar imagem
+                          </div>
+                        </label>
+                        {customization.purchase_event.image && (
+                          <button type="button" className="text-xs text-muted-foreground hover:text-foreground transition-colors" onClick={() => setCustomization((prev) => prev ? { ...prev, purchase_event: { ...prev.purchase_event, image: "" } } : prev)}>
+                            Remover
+                          </button>
+                        )}
+                      </div>
+                      {(eventImagePreview || customization.purchase_event.image) && (
+                        <img src={eventImagePreview || customization.purchase_event.image} alt="" className="mt-3 h-24 rounded-lg object-cover border border-white/[0.08]" />
+                      )}
+                    </div>
+                  </div>
+                </CollapsibleSection>
+
+                {/* Feedback Incentive */}
+                <CollapsibleSection
+                  icon={MessageSquare}
+                  title="Incentivo de Feedback"
+                  description="Mensagem e botão exibidos após a compra"
+                >
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Mensagem</label>
+                      <textarea
+                        value={customization.feedback_incentive.message}
+                        onChange={(e) => setCustomization((prev) => prev ? { ...prev, feedback_incentive: { ...prev.feedback_incentive, message: e.target.value } } : prev)}
+                        rows={3}
+                        className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/[0.08] outline-none focus:border-white/20 transition-colors duration-150 resize-none"
+                      />
+                    </div>
+                    <div className="max-w-sm">
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Texto do Botão</label>
                       <input
                         type="text"
-                        placeholder="Buscar produto..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 pr-3 py-2.5 text-sm rounded-xl bg-white/5 border border-white/10 outline-none focus:border-white/20 transition-all duration-200 w-48"
+                        value={customization.feedback_incentive.button_text}
+                        onChange={(e) => setCustomization((prev) => prev ? { ...prev, feedback_incentive: { ...prev.feedback_incentive, button_text: e.target.value } } : prev)}
+                        className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/[0.08] outline-none focus:border-white/20 transition-colors duration-150"
                       />
                     </div>
-                    <GlassButton size="sm" onClick={handleNewProduct}>
-                      <Plus className="w-4 h-4" />
-                      Novo produto
-                    </GlassButton>
                   </div>
-                }
-              />
+                </CollapsibleSection>
 
-              {productError && (
-                <p className="text-sm text-destructive mb-3">{productError}</p>
-              )}
-
-              <DataTable
-                columns={[
-                  {
-                    key: "name",
-                    header: "Produto",
-                    render: (item) => (
-                      <div className="flex items-center gap-3">
-                        <motion.div
-                          className="w-10 h-10 rounded-lg bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center"
-                          whileHover={{ rotate: 5, scale: 1.05 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <Package className="w-5 h-5 text-muted-foreground" />
-                        </motion.div>
-                        <div>
-                          <p className="font-medium">{item.name}</p>
-                          <p className="text-xs text-muted-foreground">{item.id}</p>
-                        </div>
-                      </div>
-                    ),
-                  },
-                  {
-                    key: "price",
-                    header: "Preço",
-                    render: (item) => (
-                      <span className="font-medium">
-                        {item.min_price === item.max_price
-                          ? formatCurrency(item.min_price)
-                          : `${formatCurrency(item.min_price)} - ${formatCurrency(item.max_price)}`}
-                      </span>
-                    ),
-                  },
-                  {
-                    key: "stock",
-                    header: "Estoque",
-                    render: (item) => (
-                      <motion.span
-                        className={cn(
-                          "font-medium px-2 py-1 rounded-lg",
-                          item.has_infinite_stock && "text-success bg-success/10",
-                          item.stock_total !== null && item.stock_total < 5 && "text-warning bg-warning/10",
-                          item.stock_total === 0 && "text-destructive bg-destructive/10"
-                        )}
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        {item.has_infinite_stock ? "∞" : item.stock_total ?? "—"}
-                      </motion.span>
-                    ),
-                  },
-                  {
-                    key: "sales",
-                    header: "Vendas",
-                    render: (item) => (
-                      <span className="font-medium">{item.info?.purchasesIds?.length || 0}</span>
-                    ),
-                  },
-                  {
-                    key: "active",
-                    header: "Status",
-                    render: (item) => (
-                      <motion.span
-                        className={cn(
-                          "px-3 py-1.5 rounded-xl text-xs font-medium inline-flex items-center gap-1.5",
-                          item.info?.active !== false
-                            ? "bg-success/20 text-success"
-                            : "bg-muted/50 text-muted-foreground"
-                        )}
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        {item.info?.active !== false && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
-                        )}
-                        {item.info?.active !== false ? "Ativo" : "Inativo"}
-                      </motion.span>
-                    ),
-                  },
-                  {
-                    key: "actions",
-                    header: "",
-                    render: (item) => (
-                      <div className="flex items-center gap-1">
-                        <motion.button
-                          className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => handleEditProduct(item)}
-                        >
-                          <Eye className="w-4 h-4" />
-                        </motion.button>
-                        <motion.button
-                          className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => handleEditProduct(item)}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </motion.button>
-                        <motion.button
-                          className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => handleDuplicateProduct(item.id)}
-                        >
-                          <Sparkles className="w-4 h-4" />
-                        </motion.button>
-                        <motion.button
-                          className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => handleOpenSend(item)}
-                        >
-                          <Send className="w-4 h-4" />
-                        </motion.button>
-                        <motion.button
-                          className="p-2 rounded-lg hover:bg-white/10 transition-colors text-destructive"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => handleRequestDelete(item)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </motion.button>
-                      </div>
-                    ),
-                    className: "w-32",
-                  },
-                ]}
-                data={filteredProducts}
-                keyExtractor={(item) => item.id}
-                emptyMessage={loading ? "Carregando..." : "Nenhum produto encontrado"}
-              />
-            </GlassCard>
-          </TabsContent>
-
-          <TabsContent value="customization">
-            <GlassCard className="p-5" hover={false}>
-              <SectionHeader
-                title="Personalização"
-                description="Configure mensagens e aparência da loja"
-                actions={
-                  <GlassButton size="sm" onClick={handleCustomizationSave} disabled={customizationSaving}>
-                    Salvar
-                  </GlassButton>
-                }
-              />
-              {customizationError && (
-                <p className="text-sm text-destructive mb-3">{customizationError}</p>
-              )}
-              {customizationLoading || !customization ? (
-                <p className="text-sm text-muted-foreground">Carregando...</p>
-              ) : (
-                <motion.div
-                  className="space-y-6"
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
+                {/* Doubt Button */}
+                <CollapsibleSection
+                  icon={HelpCircle}
+                  title="Botão de Dúvidas"
+                  description="Botão exibido em todos os produtos para tirar dúvidas"
                 >
-                  <motion.div variants={itemVariants} className="space-y-4">
-                    <h4 className="text-sm font-medium">Evento de Compra</h4>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Cor do Evento (Hex)</label>
-                        <ColorPicker
-                          value={customization.purchase_event.color || ""}
-                          onChange={(value) =>
-                            setCustomization((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    purchase_event: { ...prev.purchase_event, color: value },
-                                  }
-                                : prev
-                            )
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Imagem do Evento</label>
-                        <div className="flex items-center gap-3">
-                          <label className="cursor-pointer">
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) => handleCustomizationImage("purchase_event", e)}
-                              className="hidden"
-                            />
-                            <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm hover:bg-white/10 transition-colors">
-                              Enviar imagem
-                            </div>
-                          </label>
-                          {customization.purchase_event.image && (
-                            <button
-                              type="button"
-                              className="text-xs text-muted-foreground hover:text-foreground"
-                              onClick={() =>
-                                setCustomization((prev) =>
-                                  prev
-                                    ? {
-                                        ...prev,
-                                        purchase_event: { ...prev.purchase_event, image: "" },
-                                      }
-                                    : prev
-                                )
-                              }
-                            >
-                              Remover
-                            </button>
-                          )}
-                        </div>
-                        {(eventImagePreview || customization.purchase_event.image) && (
-                          <img
-                            src={eventImagePreview || customization.purchase_event.image}
-                            alt=""
-                            className="mt-3 h-24 rounded-lg object-cover border border-white/10"
-                          />
-                        )}
-                      </div>
+                  <SettingsRow
+                    label="Ativar botão de dúvidas"
+                    description="Mostra um botão em todos os produtos"
+                    control={
+                      <Switch
+                        checked={customization.doubt_button.enabled}
+                        onCheckedChange={(checked) => setCustomization((prev) => prev ? { ...prev, doubt_button: { ...prev.doubt_button, enabled: checked } } : prev)}
+                      />
+                    }
+                  />
+                  <div className="grid md:grid-cols-2 gap-4 pt-2">
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Texto do Botão</label>
+                      <input
+                        type="text"
+                        value={customization.doubt_button.button_label}
+                        onChange={(e) => setCustomization((prev) => prev ? { ...prev, doubt_button: { ...prev.doubt_button, button_label: e.target.value } } : prev)}
+                        className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/[0.08] outline-none focus:border-white/20 transition-colors duration-150"
+                      />
                     </div>
-                  </motion.div>
-
-                  <motion.div variants={itemVariants} className="space-y-4">
-                    <h4 className="text-sm font-medium">Incentivo de Feedback</h4>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="md:col-span-2">
-                        <label className="text-sm font-medium mb-2 block">Mensagem</label>
-                        <textarea
-                          value={customization.feedback_incentive.message}
-                          onChange={(e) =>
-                            setCustomization((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    feedback_incentive: {
-                                      ...prev.feedback_incentive,
-                                      message: e.target.value,
-                                    },
-                                  }
-                                : prev
-                            )
-                          }
-                          rows={4}
-                          className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Texto do Botão</label>
-                        <input
-                          type="text"
-                          value={customization.feedback_incentive.button_text}
-                          onChange={(e) =>
-                            setCustomization((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    feedback_incentive: {
-                                      ...prev.feedback_incentive,
-                                      button_text: e.target.value,
-                                    },
-                                  }
-                                : prev
-                            )
-                          }
-                          className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                        />
-                      </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Emoji do Botão</label>
+                      <EmojiPicker
+                        value={customization.doubt_button.button_emoji}
+                        onChange={(value) => setCustomization((prev) => prev ? { ...prev, doubt_button: { ...prev.doubt_button, button_emoji: value || "" } } : prev)}
+                      />
                     </div>
-                  </motion.div>
-
-                  <motion.div variants={itemVariants} className="space-y-4">
-                    <h4 className="text-sm font-medium">Botão de Dúvidas</h4>
-                    <SettingsRow
-                      label="Ativar botão de dúvidas"
-                      description="Mostra um botão em todos os produtos"
-                      control={
-                        <Switch
-                          checked={customization.doubt_button.enabled}
-                          onCheckedChange={(checked) =>
-                            setCustomization((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    doubt_button: { ...prev.doubt_button, enabled: checked },
-                                  }
-                                : prev
-                            )
-                          }
-                        />
-                      }
-                    />
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Texto do Botão</label>
-                        <input
-                          type="text"
-                          value={customization.doubt_button.button_label}
-                          onChange={(e) =>
-                            setCustomization((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    doubt_button: {
-                                      ...prev.doubt_button,
-                                      button_label: e.target.value,
-                                    },
-                                  }
-                                : prev
-                            )
-                          }
-                          className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Emoji do Botão</label>
-                        <EmojiPicker
-                          value={customization.doubt_button.button_emoji}
-                          onChange={(value) =>
-                            setCustomization((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    doubt_button: { ...prev.doubt_button, button_emoji: value || "" },
-                                  }
-                                : prev
-                            )
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Canal de Dúvidas</label>
-                        <GlassSelect
-                          value={customization.doubt_button.channel_id || ""}
-                          onValueChange={(value) =>
-                            setCustomization((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    doubt_button: { ...prev.doubt_button, channel_id: value },
-                                  }
-                                : prev
-                            )
-                          }
-                        >
-                          <GlassSelectTrigger>
-                            <GlassSelectValue placeholder="Selecione um canal" />
-                          </GlassSelectTrigger>
-                          <GlassSelectContent>
-                            {customizationChannels.map((channel) => (
-                              <GlassSelectItem key={channel.id} value={channel.id}>
-                                #{channel.name}
-                              </GlassSelectItem>
-                            ))}
-                          </GlassSelectContent>
-                        </GlassSelect>
-                      </div>
-                      <div className="md:col-span-2">
-                        <label className="text-sm font-medium mb-2 block">Mensagem Inicial</label>
-                        <textarea
-                          value={customization.doubt_button.message}
-                          onChange={(e) =>
-                            setCustomization((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    doubt_button: { ...prev.doubt_button, message: e.target.value },
-                                  }
-                                : prev
-                            )
-                          }
-                          rows={3}
-                          className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                        />
-                      </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Canal de Dúvidas</label>
+                      <GlassSelect
+                        value={customization.doubt_button.channel_id || ""}
+                        onValueChange={(value) => setCustomization((prev) => prev ? { ...prev, doubt_button: { ...prev.doubt_button, channel_id: value } } : prev)}
+                      >
+                        <GlassSelectTrigger>
+                          <GlassSelectValue placeholder="Selecione um canal" />
+                        </GlassSelectTrigger>
+                        <GlassSelectContent>
+                          {customizationChannels.map((channel) => (
+                            <GlassSelectItem key={channel.id} value={channel.id}>#{channel.name}</GlassSelectItem>
+                          ))}
+                        </GlassSelectContent>
+                      </GlassSelect>
                     </div>
-                  </motion.div>
-
-                  <motion.div variants={itemVariants} className="space-y-4">
-                    <h4 className="text-sm font-medium">QR Code Pix</h4>
-                    <SettingsRow
-                      label="Ativar personalização do QR Code"
-                      description="Aplica cores e logo personalizados"
-                      control={
-                        <Switch
-                          checked={customization.qr_customization.enabled}
-                          onCheckedChange={(checked) =>
-                            setCustomization((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    qr_customization: { ...prev.qr_customization, enabled: checked },
-                                  }
-                                : prev
-                            )
-                          }
-                        />
-                      }
-                    />
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Cor do QR (Hex)</label>
-                        <ColorPicker
-                          value={customization.qr_customization.color}
-                          onChange={(value) =>
-                            setCustomization((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    qr_customization: { ...prev.qr_customization, color: value },
-                                  }
-                                : prev
-                            )
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Cor de Fundo (Hex)</label>
-                        <ColorPicker
-                          value={customization.qr_customization.background_color}
-                          onChange={(value) =>
-                            setCustomization((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    qr_customization: { ...prev.qr_customization, background_color: value },
-                                  }
-                                : prev
-                            )
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Logo do QR</label>
-                        <div className="flex items-center gap-3">
-                          <label className="cursor-pointer">
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) => handleCustomizationImage("qr_logo", e)}
-                              className="hidden"
-                            />
-                            <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm hover:bg-white/10 transition-colors">
-                              Enviar imagem
-                            </div>
-                          </label>
-                          {customization.qr_customization.logo_url && (
-                            <button
-                              type="button"
-                              className="text-xs text-muted-foreground hover:text-foreground"
-                              onClick={() =>
-                                setCustomization((prev) =>
-                                  prev
-                                    ? {
-                                        ...prev,
-                                        qr_customization: { ...prev.qr_customization, logo_url: "" },
-                                      }
-                                    : prev
-                                )
-                              }
-                            >
-                              Remover
-                            </button>
-                          )}
-                        </div>
-                        {(qrLogoPreview || customization.qr_customization.logo_url) && (
-                          <img
-                            src={qrLogoPreview || customization.qr_customization.logo_url}
-                            alt=""
-                            className="mt-3 h-20 rounded-lg object-cover border border-white/10"
-                          />
-                        )}
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Tamanho do Logo (0.1 a 0.5)</label>
-                        <input
-                          type="number"
-                          min="0.1"
-                          max="0.5"
-                          step="0.1"
-                          value={customization.qr_customization.logo_size}
-                          onChange={(e) =>
-                            setCustomization((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    qr_customization: {
-                                      ...prev.qr_customization,
-                                      logo_size: Number(e.target.value),
-                                    },
-                                  }
-                                : prev
-                            )
-                          }
-                          className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Estilo dos Cantos</label>
-                        <GlassSelect
-                          value={customization.qr_customization.corner_style}
-                          onValueChange={(value) =>
-                            setCustomization((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    qr_customization: { ...prev.qr_customization, corner_style: value },
-                                  }
-                                : prev
-                            )
-                          }
-                        >
-                          <GlassSelectTrigger>
-                            <GlassSelectValue placeholder="Selecione..." />
-                          </GlassSelectTrigger>
-                          <GlassSelectContent>
-                            <GlassSelectItem value="square">square</GlassSelectItem>
-                            <GlassSelectItem value="rounded">rounded</GlassSelectItem>
-                            <GlassSelectItem value="dots">dots</GlassSelectItem>
-                          </GlassSelectContent>
-                        </GlassSelect>
-                      </div>
+                    <div className="md:col-span-2">
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Mensagem Inicial</label>
+                      <textarea
+                        value={customization.doubt_button.message}
+                        onChange={(e) => setCustomization((prev) => prev ? { ...prev, doubt_button: { ...prev.doubt_button, message: e.target.value } } : prev)}
+                        rows={3}
+                        className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/[0.08] outline-none focus:border-white/20 transition-colors duration-150 resize-none"
+                      />
                     </div>
-                  </motion.div>
-                </motion.div>
-              )}
-            </GlassCard>
-          </TabsContent>
+                  </div>
+                </CollapsibleSection>
 
-          <TabsContent value="preferences">
-            <GlassCard className="p-5" hover={false}>
-              <SectionHeader
-                title="Preferências da Loja"
-                description="Configurações gerais da loja"
-                actions={
-                  <GlassButton size="sm" onClick={handlePreferencesSave} disabled={!preferences || preferencesSaving}>
-                    {preferencesSaving ? "Salvando..." : "Salvar alterações"}
-                  </GlassButton>
-                }
-              />
-              <motion.div
-                className="space-y-4"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                {preferencesLoading && (
-                  <motion.div variants={itemVariants}>
-                    <div className="text-sm text-muted-foreground">Carregando preferências...</div>
-                  </motion.div>
-                )}
-
-                {preferencesError && (
-                  <motion.div variants={itemVariants}>
-                    <div className="text-sm text-red-400">{preferencesError}</div>
-                  </motion.div>
-                )}
-
-                {preferences && (
-                  <>
-                    <motion.div variants={itemVariants}>
-                      <SettingsRow
-                        label="Tempo do carrinho"
-                        description="Define o tempo padrão de expiração do carrinho"
-                        control={
-                          <GlassSelect
-                            value={String(preferences.cart_duration_minutes)}
-                            onValueChange={(value) =>
-                              setPreferences((prev) =>
-                                prev ? { ...prev, cart_duration_minutes: Number(value) } : prev
-                              )
-                            }
-                          >
-                            <GlassSelectTrigger>
-                              <GlassSelectValue placeholder="Selecione..." />
-                            </GlassSelectTrigger>
-                            <GlassSelectContent>
-                              {[10, 15, 20, 30, 45, 60, 90, 120].map((minutes) => (
-                                <GlassSelectItem key={minutes} value={String(minutes)}>
-                                  {minutes} minutos
-                                </GlassSelectItem>
-                              ))}
-                            </GlassSelectContent>
-                          </GlassSelect>
-                        }
+                {/* QR Code */}
+                <CollapsibleSection
+                  icon={QrCode}
+                  title="QR Code Pix"
+                  description="Personalização visual do QR Code de pagamento"
+                >
+                  <SettingsRow
+                    label="Ativar personalização do QR Code"
+                    description="Aplica cores e logo personalizados"
+                    control={
+                      <Switch
+                        checked={customization.qr_customization.enabled}
+                        onCheckedChange={(checked) => setCustomization((prev) => prev ? { ...prev, qr_customization: { ...prev.qr_customization, enabled: checked } } : prev)}
                       />
-                    </motion.div>
-
-                    <motion.div variants={itemVariants} className="space-y-3">
-                      <SettingsRow
-                        label="Horário de funcionamento"
-                        description="Defina horários em que a loja fica ativa"
-                        control={
-                          <Switch
-                            checked={preferences.office_hours.enabled}
-                            onCheckedChange={(checked) =>
-                              setPreferences((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      office_hours: { ...prev.office_hours, enabled: checked },
-                                    }
-                                  : prev
-                              )
-                            }
-                          />
-                        }
+                    }
+                  />
+                  <div className="grid md:grid-cols-2 gap-4 pt-2">
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Cor do QR</label>
+                      <ColorPicker
+                        value={customization.qr_customization.color}
+                        onChange={(value) => setCustomization((prev) => prev ? { ...prev, qr_customization: { ...prev.qr_customization, color: value } } : prev)}
                       />
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Abertura</label>
-                          <input
-                            type="text"
-                            value={preferences.office_hours.start_time}
-                            onChange={(e) =>
-                              setPreferences((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      office_hours: { ...prev.office_hours, start_time: e.target.value },
-                                    }
-                                  : prev
-                              )
-                            }
-                            placeholder="09:00"
-                            className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Fechamento</label>
-                          <input
-                            type="text"
-                            value={preferences.office_hours.end_time}
-                            onChange={(e) =>
-                              setPreferences((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      office_hours: { ...prev.office_hours, end_time: e.target.value },
-                                    }
-                                  : prev
-                              )
-                            }
-                            placeholder="18:00"
-                            className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                          />
-                        </div>
-                        <div className="md:col-span-2">
-                          <label className="text-sm font-medium mb-2 block">Dias sem funcionamento</label>
-                          <input
-                            type="text"
-                            value={preferences.office_hours.off_days.join(",")}
-                            onChange={(e) =>
-                              setPreferences((prev) => {
-                                if (!prev) return prev;
-                                const days = e.target.value
-                                  .split(",")
-                                  .map((day) => day.trim())
-                                  .filter(Boolean);
-                                return {
-                                  ...prev,
-                                  office_hours: { ...prev.office_hours, off_days: days },
-                                };
-                              })
-                            }
-                            placeholder="seg,ter,qua,qui,sex"
-                            className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                          />
-                        </div>
-                        <div className="md:col-span-2">
-                          <label className="text-sm font-medium mb-2 block">Mensagem fora de horário</label>
-                          <textarea
-                            value={preferences.office_hours.message}
-                            onChange={(e) =>
-                              setPreferences((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      office_hours: { ...prev.office_hours, message: e.target.value },
-                                    }
-                                  : prev
-                              )
-                            }
-                            placeholder="Nosso horário de atendimento é das {start_time} às {end_time}."
-                            rows={3}
-                            className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors resize-none"
-                          />
-                        </div>
-                      </div>
-                    </motion.div>
-
-                    <motion.div variants={itemVariants} className="space-y-3">
-                      <SettingsRow
-                        label="Termos de uso"
-                        description="Exigir aceitação dos termos antes da compra"
-                        control={
-                          <Switch
-                            checked={preferences.terms.enabled}
-                            onCheckedChange={(checked) =>
-                              setPreferences((prev) =>
-                                prev ? { ...prev, terms: { ...prev.terms, enabled: checked } } : prev
-                              )
-                            }
-                          />
-                        }
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Cor de Fundo</label>
+                      <ColorPicker
+                        value={customization.qr_customization.background_color}
+                        onChange={(value) => setCustomization((prev) => prev ? { ...prev, qr_customization: { ...prev.qr_customization, background_color: value } } : prev)}
                       />
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Texto dos termos</label>
-                        <textarea
-                          value={preferences.terms.text}
-                          onChange={(e) =>
-                            setPreferences((prev) =>
-                              prev ? { ...prev, terms: { ...prev.terms, text: e.target.value } } : prev
-                            )
-                          }
-                          placeholder="Digite os termos que os usuários precisam aceitar..."
-                          rows={4}
-                          className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors resize-none"
-                        />
-                      </div>
-                    </motion.div>
-
-                    <motion.div variants={itemVariants} className="space-y-3">
-                      <SettingsRow
-                        label="Transcripts"
-                        description="Salvar histórico de compras"
-                        control={
-                          <Switch
-                            checked={preferences.transcript_enabled}
-                            onCheckedChange={(checked) =>
-                              setPreferences((prev) =>
-                                prev ? { ...prev, transcript_enabled: checked } : prev
-                              )
-                            }
-                          />
-                        }
-                      />
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Canal de transcripts</label>
-                        <GlassSelect
-                          value={preferences.transcript_channel_id || ""}
-                          onValueChange={(value) =>
-                            setPreferences((prev) =>
-                              prev ? { ...prev, transcript_channel_id: value } : prev
-                            )
-                          }
-                        >
-                          <GlassSelectTrigger>
-                            <GlassSelectValue placeholder="Selecione um canal" />
-                          </GlassSelectTrigger>
-                          <GlassSelectContent>
-                            {preferencesChannels.map((channel) => (
-                              <GlassSelectItem key={channel.id} value={channel.id}>
-                                #{channel.name}
-                              </GlassSelectItem>
-                            ))}
-                          </GlassSelectContent>
-                        </GlassSelect>
-                      </div>
-                    </motion.div>
-
-                    <motion.div variants={itemVariants} className="space-y-3">
-                      <SettingsRow
-                        label="Solicitar reposição"
-                        description="Notificar quando estoque estiver baixo"
-                        control={
-                          <Switch
-                            checked={preferences.stock_requests.enabled}
-                            onCheckedChange={(checked) =>
-                              setPreferences((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      stock_requests: { ...prev.stock_requests, enabled: checked },
-                                    }
-                                  : prev
-                              )
-                            }
-                          />
-                        }
-                      />
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Canal</label>
-                          <GlassSelect
-                            value={preferences.stock_requests.channel_id || ""}
-                            onValueChange={(value) =>
-                              setPreferences((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      stock_requests: { ...prev.stock_requests, channel_id: value },
-                                    }
-                                  : prev
-                              )
-                            }
-                          >
-                            <GlassSelectTrigger>
-                              <GlassSelectValue placeholder="Selecione um canal" />
-                            </GlassSelectTrigger>
-                            <GlassSelectContent>
-                              {preferencesChannels.map((channel) => (
-                                <GlassSelectItem key={channel.id} value={channel.id}>
-                                  #{channel.name}
-                                </GlassSelectItem>
-                              ))}
-                            </GlassSelectContent>
-                          </GlassSelect>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Cargo</label>
-                          <GlassSelect
-                            value={preferences.stock_requests.role_id || ""}
-                            onValueChange={(value) =>
-                              setPreferences((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      stock_requests: { ...prev.stock_requests, role_id: value },
-                                    }
-                                  : prev
-                              )
-                            }
-                          >
-                            <GlassSelectTrigger>
-                              <GlassSelectValue placeholder="Selecione um cargo" />
-                            </GlassSelectTrigger>
-                            <GlassSelectContent>
-                              {roles.map((role) => (
-                                <GlassSelectItem key={role.id} value={role.id}>
-                                  {role.name}
-                                </GlassSelectItem>
-                              ))}
-                            </GlassSelectContent>
-                          </GlassSelect>
-                        </div>
-                      </div>
-                    </motion.div>
-
-                    <motion.div variants={itemVariants} className="space-y-3">
-                      <SettingsRow
-                        label="Modo manutenção"
-                        description="Desativar temporariamente a loja"
-                        control={
-                          <Switch
-                            checked={preferences.maintenance.enabled}
-                            onCheckedChange={(checked) =>
-                              setPreferences((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      maintenance: { ...prev.maintenance, enabled: checked },
-                                    }
-                                  : prev
-                              )
-                            }
-                          />
-                        }
-                      />
-                      <SettingsRow
-                        label="Permitir admins"
-                        description="Admins podem comprar mesmo em manutenção"
-                        control={
-                          <Switch
-                            checked={preferences.maintenance.allow_admins}
-                            onCheckedChange={(checked) =>
-                              setPreferences((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      maintenance: { ...prev.maintenance, allow_admins: checked },
-                                    }
-                                  : prev
-                              )
-                            }
-                          />
-                        }
-                      />
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Mensagem de manutenção</label>
-                        <textarea
-                          value={preferences.maintenance.message}
-                          onChange={(e) =>
-                            setPreferences((prev) =>
-                              prev
-                                ? {
-                                    ...prev,
-                                    maintenance: { ...prev.maintenance, message: e.target.value },
-                                  }
-                                : prev
-                            )
-                          }
-                          placeholder="Olá, {user} a loja está em manutenção, tente novamente mais tarde."
-                          rows={3}
-                          className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors resize-none"
-                        />
-                      </div>
-                    </motion.div>
-                  </>
-                )}
-              </motion.div>
-            </GlassCard>
-          </TabsContent>
-
-          <TabsContent value="customers">
-            <GlassCard className="p-5" hover={false}>
-              <SectionHeader
-                title="Clientes"
-                description="Gerencie seus clientes e sincronize dados"
-                actions={
-                  <GlassButton size="sm" onClick={handleSyncCustomers} disabled={customersSyncing}>
-                    <Users className="w-4 h-4" />
-                    {customersSyncing ? "Sincronizando..." : "Sincronizar"}
-                  </GlassButton>
-                }
-              />
-              {customersLoading && (
-                <div className="text-sm text-muted-foreground mb-4">Carregando clientes...</div>
-              )}
-              {customersError && (
-                <div className="text-sm text-red-400 mb-4">{customersError}</div>
-              )}
-              <DataTable
-                columns={[
-                  {
-                    key: "username",
-                    header: "Cliente",
-                    render: (row) => (
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Logo do QR</label>
                       <div className="flex items-center gap-3">
-                        {row.avatar ? (
-                          <img
-                            src={row.avatar}
-                            alt={row.username}
-                            className="w-8 h-8 rounded-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-8 h-8 rounded-full bg-white/10" />
+                        <label className="cursor-pointer">
+                          <input type="file" accept="image/*" onChange={(e) => handleCustomizationImage("qr_logo", e)} className="hidden" />
+                          <div className="px-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-sm hover:bg-white/[0.06] transition-colors duration-150">
+                            Enviar imagem
+                          </div>
+                        </label>
+                        {customization.qr_customization.logo_url && (
+                          <button type="button" className="text-xs text-muted-foreground hover:text-foreground transition-colors" onClick={() => setCustomization((prev) => prev ? { ...prev, qr_customization: { ...prev.qr_customization, logo_url: "" } } : prev)}>
+                            Remover
+                          </button>
                         )}
-                        <span className="font-medium">{row.username}</span>
                       </div>
-                    ),
-                  },
-                  {
-                    key: "totalSpent",
-                    header: "Total Gasto",
-                    render: (row) => (
-                      <span className="font-medium text-emerald-400">
-                        {formatCurrency(row.totalSpent || 0)}
-                      </span>
-                    ),
-                  },
-                  {
-                    key: "orders",
-                    header: "Pedidos",
-                    render: (row) => <span className="font-medium">{row.orders || 0}</span>,
-                  },
-                  {
-                    key: "lastPurchase",
-                    header: "Última Compra",
-                    render: (row) =>
-                      row.lastPurchase ? formatDate(row.lastPurchase) : "—",
-                  },
-                  {
-                    key: "balance",
-                    header: "Saldo",
-                    render: () => <span className="font-medium">—</span>,
-                  },
-                ]}
-                data={customerRows}
-                keyExtractor={(row) => row.id}
-                emptyMessage="Nenhum cliente encontrado"
-              />
-            </GlassCard>
-          </TabsContent>
+                      {(qrLogoPreview || customization.qr_customization.logo_url) && (
+                        <img src={qrLogoPreview || customization.qr_customization.logo_url} alt="" className="mt-3 h-20 rounded-lg object-cover border border-white/[0.08]" />
+                      )}
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Tamanho do Logo (0.1 a 0.5)</label>
+                      <input
+                        type="number" min="0.1" max="0.5" step="0.1"
+                        value={customization.qr_customization.logo_size}
+                        onChange={(e) => setCustomization((prev) => prev ? { ...prev, qr_customization: { ...prev.qr_customization, logo_size: Number(e.target.value) } } : prev)}
+                        className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/[0.08] outline-none focus:border-white/20 transition-colors duration-150"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Estilo dos Cantos</label>
+                      <GlassSelect
+                        value={customization.qr_customization.corner_style}
+                        onValueChange={(value) => setCustomization((prev) => prev ? { ...prev, qr_customization: { ...prev.qr_customization, corner_style: value } } : prev)}
+                      >
+                        <GlassSelectTrigger>
+                          <GlassSelectValue placeholder="Selecione..." />
+                        </GlassSelectTrigger>
+                        <GlassSelectContent>
+                          <GlassSelectItem value="square">Square</GlassSelectItem>
+                          <GlassSelectItem value="rounded">Rounded</GlassSelectItem>
+                          <GlassSelectItem value="dots">Dots</GlassSelectItem>
+                        </GlassSelectContent>
+                      </GlassSelect>
+                    </div>
+                  </div>
+                </CollapsibleSection>
+              </div>
+            )}
+          </GlassCard>
+        </TabsContent>
 
-          <TabsContent value="balance">
-            <GlassCard className="p-5" hover={false}>
-              <SectionHeader
-                title="Saldo & Cashback"
-                description="Configurações completas do sistema de saldo e cashback"
-              />
-              {balanceLoading && <div className="text-sm text-muted-foreground mt-3">Carregando...</div>}
-              {balanceError && <div className="text-sm text-red-400 mt-3">{balanceError}</div>}
+        <TabsContent value="preferences">
+          <GlassCard className="p-5" hover={false}>
+            <SectionHeader
+              title="Preferências da Loja"
+              description="Configurações gerais da loja"
+              actions={
+                <GlassButton size="sm" onClick={handlePreferencesSave} disabled={!preferences || preferencesSaving}>
+                  {preferencesSaving ? "Salvando..." : "Salvar alterações"}
+                </GlassButton>
+              }
+            />
 
-              <Tabs value={balanceTab} onValueChange={setBalanceTab} className="mt-4">
-                <TabsList className="mb-4 flex flex-wrap gap-2">
-                  <TabsTrigger value="saldo-config">Saldo</TabsTrigger>
-                  <TabsTrigger value="saldo-panel">Painel de Depósito</TabsTrigger>
-                  <TabsTrigger value="saldo-admin">Admin</TabsTrigger>
-                  <TabsTrigger value="saldo-users">Saldos dos Clientes</TabsTrigger>
-                  <TabsTrigger value="cashback">Cashback</TabsTrigger>
-                </TabsList>
+            {preferencesLoading && <div className="text-sm text-muted-foreground">Carregando preferências...</div>}
+            {preferencesError && <div className="text-sm text-destructive">{preferencesError}</div>}
+
+            {preferences && (
+              <div className="space-y-3">
+                {/* Cart Duration */}
+                <CollapsibleSection icon={CreditCard} title="Carrinho" description="Tempo de expiração do carrinho" defaultOpen>
+                  <SettingsRow
+                    label="Tempo do carrinho"
+                    description="Define o tempo padrão de expiração"
+                    control={
+                      <GlassSelect value={String(preferences.cart_duration_minutes)} onValueChange={(value) => setPreferences((prev) => prev ? { ...prev, cart_duration_minutes: Number(value) } : prev)}>
+                        <GlassSelectTrigger className="w-36">
+                          <GlassSelectValue placeholder="Selecione..." />
+                        </GlassSelectTrigger>
+                        <GlassSelectContent>
+                          {[10, 15, 20, 30, 45, 60, 90, 120].map((minutes) => (
+                            <GlassSelectItem key={minutes} value={String(minutes)}>{minutes} minutos</GlassSelectItem>
+                          ))}
+                        </GlassSelectContent>
+                      </GlassSelect>
+                    }
+                  />
+                </CollapsibleSection>
+
+                {/* Office Hours */}
+                <CollapsibleSection icon={Clock} title="Horário de Funcionamento" description="Defina horários em que a loja fica ativa">
+                  <SettingsRow
+                    label="Ativar horário"
+                    description="Limitar funcionamento da loja por horário"
+                    control={
+                      <Switch checked={preferences.office_hours.enabled} onCheckedChange={(checked) => setPreferences((prev) => prev ? { ...prev, office_hours: { ...prev.office_hours, enabled: checked } } : prev)} />
+                    }
+                  />
+                  <div className="grid gap-3 md:grid-cols-2 pt-2">
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Abertura</label>
+                      <input type="text" value={preferences.office_hours.start_time} onChange={(e) => setPreferences((prev) => prev ? { ...prev, office_hours: { ...prev.office_hours, start_time: e.target.value } } : prev)} placeholder="09:00" className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/[0.08] outline-none focus:border-white/20 transition-colors duration-150" />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Fechamento</label>
+                      <input type="text" value={preferences.office_hours.end_time} onChange={(e) => setPreferences((prev) => prev ? { ...prev, office_hours: { ...prev.office_hours, end_time: e.target.value } } : prev)} placeholder="18:00" className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/[0.08] outline-none focus:border-white/20 transition-colors duration-150" />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Dias sem funcionamento</label>
+                      <input type="text" value={preferences.office_hours.off_days.join(",")} onChange={(e) => { const days = e.target.value.split(",").map((d) => d.trim()).filter(Boolean); setPreferences((prev) => prev ? { ...prev, office_hours: { ...prev.office_hours, off_days: days } } : prev); }} placeholder="seg,ter,qua,qui,sex" className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/[0.08] outline-none focus:border-white/20 transition-colors duration-150" />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Mensagem fora de horário</label>
+                      <textarea value={preferences.office_hours.message} onChange={(e) => setPreferences((prev) => prev ? { ...prev, office_hours: { ...prev.office_hours, message: e.target.value } } : prev)} placeholder={"Nosso horário de atendimento é das {start_time} às {end_time}."} rows={3} className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/[0.08] outline-none focus:border-white/20 transition-colors duration-150 resize-none" />
+                    </div>
+                  </div>
+                </CollapsibleSection>
+
+                {/* Terms */}
+                <CollapsibleSection icon={FileText} title="Termos de Uso" description="Exigir aceitação dos termos antes da compra">
+                  <SettingsRow
+                    label="Ativar termos"
+                    description="Usuários devem aceitar antes de comprar"
+                    control={
+                      <Switch checked={preferences.terms.enabled} onCheckedChange={(checked) => setPreferences((prev) => prev ? { ...prev, terms: { ...prev.terms, enabled: checked } } : prev)} />
+                    }
+                  />
+                  <div className="pt-2">
+                    <label className="text-sm font-medium mb-2 block text-muted-foreground">Texto dos termos</label>
+                    <textarea value={preferences.terms.text} onChange={(e) => setPreferences((prev) => prev ? { ...prev, terms: { ...prev.terms, text: e.target.value } } : prev)} placeholder="Digite os termos que os usuários precisam aceitar..." rows={4} className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/[0.08] outline-none focus:border-white/20 transition-colors duration-150 resize-none" />
+                  </div>
+                </CollapsibleSection>
+
+                {/* Transcripts */}
+                <CollapsibleSection icon={ScrollText} title="Transcripts" description="Salvar histórico de compras em um canal">
+                  <SettingsRow
+                    label="Ativar transcripts"
+                    description="Salvar histórico de compras automaticamente"
+                    control={
+                      <Switch checked={preferences.transcript_enabled} onCheckedChange={(checked) => setPreferences((prev) => prev ? { ...prev, transcript_enabled: checked } : prev)} />
+                    }
+                  />
+                  <div className="pt-2">
+                    <label className="text-sm font-medium mb-2 block text-muted-foreground">Canal de transcripts</label>
+                    <GlassSelect value={preferences.transcript_channel_id || ""} onValueChange={(value) => setPreferences((prev) => prev ? { ...prev, transcript_channel_id: value } : prev)}>
+                      <GlassSelectTrigger>
+                        <GlassSelectValue placeholder="Selecione um canal" />
+                      </GlassSelectTrigger>
+                      <GlassSelectContent>
+                        {preferencesChannels.map((channel) => (
+                          <GlassSelectItem key={channel.id} value={channel.id}>#{channel.name}</GlassSelectItem>
+                        ))}
+                      </GlassSelectContent>
+                    </GlassSelect>
+                  </div>
+                </CollapsibleSection>
+
+                {/* Stock Requests */}
+                <CollapsibleSection icon={Boxes} title="Solicitação de Reposição" description="Notificar quando estoque estiver baixo">
+                  <SettingsRow
+                    label="Ativar notificação"
+                    description="Enviar alerta de estoque baixo"
+                    control={
+                      <Switch checked={preferences.stock_requests.enabled} onCheckedChange={(checked) => setPreferences((prev) => prev ? { ...prev, stock_requests: { ...prev.stock_requests, enabled: checked } } : prev)} />
+                    }
+                  />
+                  <div className="grid gap-3 md:grid-cols-2 pt-2">
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Canal</label>
+                      <GlassSelect value={preferences.stock_requests.channel_id || ""} onValueChange={(value) => setPreferences((prev) => prev ? { ...prev, stock_requests: { ...prev.stock_requests, channel_id: value } } : prev)}>
+                        <GlassSelectTrigger><GlassSelectValue placeholder="Selecione um canal" /></GlassSelectTrigger>
+                        <GlassSelectContent>
+                          {preferencesChannels.map((channel) => (<GlassSelectItem key={channel.id} value={channel.id}>#{channel.name}</GlassSelectItem>))}
+                        </GlassSelectContent>
+                      </GlassSelect>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-muted-foreground">Cargo</label>
+                      <GlassSelect value={preferences.stock_requests.role_id || ""} onValueChange={(value) => setPreferences((prev) => prev ? { ...prev, stock_requests: { ...prev.stock_requests, role_id: value } } : prev)}>
+                        <GlassSelectTrigger><GlassSelectValue placeholder="Selecione um cargo" /></GlassSelectTrigger>
+                        <GlassSelectContent>
+                          {roles.map((role) => (<GlassSelectItem key={role.id} value={role.id}>{role.name}</GlassSelectItem>))}
+                        </GlassSelectContent>
+                      </GlassSelect>
+                    </div>
+                  </div>
+                </CollapsibleSection>
+
+                {/* Maintenance */}
+                <CollapsibleSection icon={Wrench} title="Modo Manutenção" description="Desativar temporariamente a loja">
+                  <SettingsRow
+                    label="Modo manutenção"
+                    description="Desativar a loja temporariamente"
+                    control={
+                      <Switch checked={preferences.maintenance.enabled} onCheckedChange={(checked) => setPreferences((prev) => prev ? { ...prev, maintenance: { ...prev.maintenance, enabled: checked } } : prev)} />
+                    }
+                  />
+                  <SettingsRow
+                    label="Permitir admins"
+                    description="Admins podem comprar em manutenção"
+                    control={
+                      <Switch checked={preferences.maintenance.allow_admins} onCheckedChange={(checked) => setPreferences((prev) => prev ? { ...prev, maintenance: { ...prev.maintenance, allow_admins: checked } } : prev)} />
+                    }
+                  />
+                  <div className="pt-2">
+                    <label className="text-sm font-medium mb-2 block text-muted-foreground">Mensagem de manutenção</label>
+                    <textarea value={preferences.maintenance.message} onChange={(e) => setPreferences((prev) => prev ? { ...prev, maintenance: { ...prev.maintenance, message: e.target.value } } : prev)} placeholder={"Olá, {user} a loja está em manutenção, tente novamente mais tarde."} rows={3} className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/[0.08] outline-none focus:border-white/20 transition-colors duration-150 resize-none" />
+                  </div>
+                </CollapsibleSection>
+              </div>
+            )}
+          </GlassCard>
+        </TabsContent>
+
+        <TabsContent value="customers">
+          <GlassCard className="p-5" hover={false}>
+            <SectionHeader
+              title="Clientes"
+              description="Gerencie seus clientes e sincronize dados"
+              actions={
+                <GlassButton size="sm" onClick={handleSyncCustomers} disabled={customersSyncing}>
+                  <Users className="w-4 h-4" />
+                  {customersSyncing ? "Sincronizando..." : "Sincronizar"}
+                </GlassButton>
+              }
+            />
+            {customersLoading && <div className="text-sm text-muted-foreground mb-4">Carregando clientes...</div>}
+            {customersError && <div className="text-sm text-destructive mb-4">{customersError}</div>}
+            <DataTable
+              columns={[
+                {
+                  key: "username",
+                  header: "Cliente",
+                  render: (row) => (
+                    <div className="flex items-center gap-3">
+                      {row.avatar ? (
+                        <img src={row.avatar} alt={row.username} className="w-8 h-8 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-white/[0.06]" />
+                      )}
+                      <span className="font-medium">{row.username}</span>
+                    </div>
+                  ),
+                },
+                {
+                  key: "totalSpent",
+                  header: "Total Gasto",
+                  render: (row) => <span className="font-medium text-success">{formatCurrency(row.totalSpent || 0)}</span>,
+                },
+                {
+                  key: "orders",
+                  header: "Pedidos",
+                  render: (row) => <span className="font-medium">{row.orders || 0}</span>,
+                },
+                {
+                  key: "lastPurchase",
+                  header: "Última Compra",
+                  render: (row) => row.lastPurchase ? formatDate(row.lastPurchase) : "—",
+                },
+                {
+                  key: "balance",
+                  header: "Saldo",
+                  render: () => <span className="font-medium">—</span>,
+                },
+              ]}
+              data={customerRows}
+              keyExtractor={(row) => row.id}
+              emptyMessage="Nenhum cliente encontrado"
+            />
+          </GlassCard>
+        </TabsContent>
+
+        <TabsContent value="balance">
+          <GlassCard className="p-5" hover={false}>
+            <SectionHeader
+              title="Saldo & Cashback"
+              description="Configurações completas do sistema de saldo e cashback"
+            />
+            {balanceLoading && <div className="text-sm text-muted-foreground mt-3">Carregando...</div>}
+            {balanceError && <div className="text-sm text-destructive mt-3">{balanceError}</div>}
+
+            <Tabs value={balanceTab} onValueChange={setBalanceTab} className="mt-4">
+              <TabsList className="mb-5 bg-white/[0.03] border border-white/[0.06] p-1 rounded-xl flex flex-wrap gap-1 h-auto">
+                <TabsTrigger value="saldo-config" className="rounded-lg data-[state=active]:bg-white/10 transition-colors duration-150 gap-2 text-xs"><CreditCard className="w-3.5 h-3.5" />Saldo</TabsTrigger>
+                <TabsTrigger value="saldo-panel" className="rounded-lg data-[state=active]:bg-white/10 transition-colors duration-150 gap-2 text-xs"><Send className="w-3.5 h-3.5" />Painel de Depósito</TabsTrigger>
+                <TabsTrigger value="saldo-admin" className="rounded-lg data-[state=active]:bg-white/10 transition-colors duration-150 gap-2 text-xs"><SettingsIcon className="w-3.5 h-3.5" />Admin</TabsTrigger>
+                <TabsTrigger value="saldo-users" className="rounded-lg data-[state=active]:bg-white/10 transition-colors duration-150 gap-2 text-xs"><Users className="w-3.5 h-3.5" />Saldos dos Clientes</TabsTrigger>
+                <TabsTrigger value="cashback" className="rounded-lg data-[state=active]:bg-white/10 transition-colors duration-150 gap-2 text-xs"><Gift className="w-3.5 h-3.5" />Cashback</TabsTrigger>
+              </TabsList>
 
                 <TabsContent value="saldo-config">
                   {saldoConfig && (
@@ -2433,24 +2080,27 @@ export default function StorePage() {
                   )}
                 </TabsContent>
 
-                <TabsContent value="saldo-admin">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <GlassButton size="sm" onClick={() => setShowSaldoAdd(true)}>
-                        Adicionar saldo
-                      </GlassButton>
-                      <GlassButton size="sm" variant="ghost" onClick={() => setShowSaldoRemove(true)}>
-                        Remover saldo
-                      </GlassButton>
-                      <GlassButton size="sm" variant="ghost" disabled>
-                        Transferir saldo
-                      </GlassButton>
-                    </div>
+              <TabsContent value="saldo-admin">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <GlassButton size="sm" onClick={() => setShowSaldoAdd(true)}>
+                      <UserPlus className="w-4 h-4" />
+                      Adicionar saldo
+                    </GlassButton>
+                    <GlassButton size="sm" variant="ghost" onClick={() => setShowSaldoRemove(true)}>
+                      <UserMinus className="w-4 h-4" />
+                      Remover saldo
+                    </GlassButton>
+                    <GlassButton size="sm" variant="ghost" disabled>
+                      <ArrowRightLeft className="w-4 h-4" />
+                      Transferir saldo
+                    </GlassButton>
                   </div>
-                </TabsContent>
+                </div>
+              </TabsContent>
 
-                <TabsContent value="saldo-users">
-                  <DataTable
+              <TabsContent value="saldo-users">
+                <DataTable
                     columns={[
                       {
                         key: "username",
@@ -2640,11 +2290,10 @@ export default function StorePage() {
                     </div>
                   )}
                 </TabsContent>
-              </Tabs>
-            </GlassCard>
-          </TabsContent>
-        </Tabs>
-      </motion.div>
+            </Tabs>
+          </GlassCard>
+        </TabsContent>
+      </Tabs>
 
       <Modal
         isOpen={showSaldoAdd}
@@ -2827,6 +2476,6 @@ export default function StorePage() {
         variant="destructive"
         loading={deleting}
       />
-    </motion.div>
+    </div>
   );
 }

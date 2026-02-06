@@ -142,14 +142,13 @@
   }
 
   .glass-hover {
-    @apply transition-all duration-500;
-    transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    @apply transition-all duration-300;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .glass-hover:hover {
     background: hsl(var(--glass-bg-hover));
     border-color: hsl(var(--glass-border-hover));
-    transform: translateY(-2px);
   }
 
   /* Glass Button Variants */
@@ -159,13 +158,12 @@
     background: hsl(var(--glass-bg));
     border: 1px solid hsl(var(--glass-border));
     backdrop-filter: blur(8px);
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
   }
 
   .glass-button:hover {
     background: hsl(var(--glass-bg-hover));
     border-color: hsl(var(--glass-border-hover));
-    transform: translateY(-2px);
   }
 
   .glass-button-primary {
@@ -174,12 +172,11 @@
     background: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
     border: none;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: background 0.2s ease, opacity 0.2s ease;
   }
 
   .glass-button-primary:hover {
     background: hsl(0 0% 90%);
-    transform: translateY(-1px);
   }
 
   /* Glass Input */
@@ -189,7 +186,7 @@
     background: hsl(var(--glass-bg));
     border: 1px solid hsl(var(--glass-border));
     backdrop-filter: blur(8px);
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: border-color 0.2s ease;
   }
 
   .glass-input:focus {
@@ -241,29 +238,29 @@
 
 @layer utilities {
   .animate-fade-up {
-    animation: fadeUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation: fadeUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 
   .animate-fade-in {
-    animation: fadeIn 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 
   .animate-blur-in {
-    animation: blurIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation: blurIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 
   .animate-slide-up {
-    animation: slideUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 
   .animate-scale-in {
-    animation: scaleIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation: scaleIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 
   @keyframes fadeUp {
     from {
       opacity: 0;
-      transform: translateY(30px);
+      transform: translateY(12px);
     }
     to {
       opacity: 1;
@@ -279,20 +276,18 @@
   @keyframes blurIn {
     from {
       opacity: 0;
-      filter: blur(12px);
-      transform: scale(0.98);
+      filter: blur(6px);
     }
     to {
       opacity: 1;
       filter: blur(0);
-      transform: scale(1);
     }
   }
 
   @keyframes slideUp {
     from {
       opacity: 0;
-      transform: translateY(16px);
+      transform: translateY(8px);
     }
     to {
       opacity: 1;
@@ -303,7 +298,7 @@
   @keyframes scaleIn {
     from {
       opacity: 0;
-      transform: scale(0.95);
+      transform: scale(0.97);
     }
     to {
       opacity: 1;

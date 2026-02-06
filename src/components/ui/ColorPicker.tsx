@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
 import { Pipette, Check, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -90,18 +89,16 @@ export function ColorPicker({ value, onChange, label, className }: ColorPickerPr
       
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
-          <motion.button
+          <button
             type="button"
             className={cn(
               "flex items-center gap-2 w-full h-12 px-3 rounded-xl",
               "bg-white/[0.03] backdrop-blur-sm",
-              "border border-white/10 hover:border-white/20",
-              "transition-all duration-200",
+              "border border-white/[0.08] hover:border-white/20",
+              "transition-colors duration-150",
               "cursor-pointer",
               isOpen && "border-white/30 bg-white/[0.05]"
             )}
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
           >
             {/* Color Preview */}
             <div
@@ -134,26 +131,22 @@ export function ColorPicker({ value, onChange, label, className }: ColorPickerPr
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-muted-foreground">Seletor de Cor</span>
               <div className="flex items-center gap-1">
-                <motion.button
+                <button
                   type="button"
                   onClick={openNativePicker}
-                  className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-muted-foreground hover:text-foreground"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  className="p-1.5 rounded-lg hover:bg-white/10 transition-colors duration-150 text-muted-foreground hover:text-foreground active:scale-95"
                   title="Abrir seletor avançado"
                 >
                   <Pipette className="w-4 h-4" />
-                </motion.button>
-                <motion.button
+                </button>
+                <button
                   type="button"
                   onClick={() => handleColorSelect("#5865F2")}
-                  className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-muted-foreground hover:text-foreground"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  className="p-1.5 rounded-lg hover:bg-white/10 transition-colors duration-150 text-muted-foreground hover:text-foreground active:scale-95"
                   title="Resetar cor"
                 >
                   <RotateCcw className="w-4 h-4" />
-                </motion.button>
+                </button>
               </div>
             </div>
           </div>
@@ -188,24 +181,22 @@ export function ColorPicker({ value, onChange, label, className }: ColorPickerPr
               </span>
               <div className="flex flex-wrap gap-1.5 mt-2">
                 {recentColors.map((color, index) => (
-                  <motion.button
+                  <button
                     key={`${color}-${index}`}
                     type="button"
                     onClick={() => handleColorSelect(color)}
                     className={cn(
-                      "w-7 h-7 rounded-lg border transition-all relative",
+                      "w-7 h-7 rounded-lg border transition-all duration-150 relative hover:scale-110 active:scale-95",
                       value === color
                         ? "border-white/40 ring-2 ring-white/20"
                         : "border-white/10 hover:border-white/30"
                     )}
                     style={{ backgroundColor: color }}
-                    whileHover={{ scale: 1.15 }}
-                    whileTap={{ scale: 0.9 }}
                   >
                     {value === color && (
                       <Check className="w-3 h-3 text-white absolute inset-0 m-auto drop-shadow-md" />
                     )}
-                  </motion.button>
+                  </button>
                 ))}
               </div>
             </div>
@@ -218,19 +209,17 @@ export function ColorPicker({ value, onChange, label, className }: ColorPickerPr
             </span>
             <div className="grid grid-cols-5 gap-1.5 mt-2">
               {PRESET_COLORS.map((color, index) => (
-                <motion.button
+                <button
                   key={`${color}-${index}`}
                   type="button"
                   onClick={() => handleColorSelect(color)}
                   className={cn(
-                    "w-full aspect-square rounded-lg border transition-all relative",
+                    "w-full aspect-square rounded-lg border transition-all duration-150 relative hover:scale-110 active:scale-95",
                     value === color
                       ? "border-white/40 ring-2 ring-white/20"
                       : "border-white/10 hover:border-white/30"
                   )}
                   style={{ backgroundColor: color }}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
                 >
                   {value === color && (
                     <Check
@@ -242,7 +231,7 @@ export function ColorPicker({ value, onChange, label, className }: ColorPickerPr
                       )}
                     />
                   )}
-                </motion.button>
+                </button>
               ))}
             </div>
           </div>

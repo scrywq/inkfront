@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface Column<T> {
@@ -53,16 +52,13 @@ export function DataTable<T extends object>({
           </tr>
         </thead>
         <tbody className="divide-y divide-white/5">
-          {data.map((item, index) => (
-            <motion.tr
+          {data.map((item) => (
+            <tr
               key={keyExtractor(item)}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.03 }}
               onClick={() => onRowClick?.(item)}
               className={cn(
-                "transition-colors",
-                onRowClick && "cursor-pointer hover:bg-white/[0.02]"
+                "transition-colors duration-150",
+                onRowClick && "cursor-pointer hover:bg-white/[0.03]"
               )}
             >
               {columns.map((column) => (
@@ -78,7 +74,7 @@ export function DataTable<T extends object>({
                     : String((item as Record<string, unknown>)[column.key] ?? "")}
                 </td>
               ))}
-            </motion.tr>
+            </tr>
           ))}
         </tbody>
       </table>

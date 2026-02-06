@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Search, Clock, Smile, Heart, ThumbsUp, Zap, Gamepad2, Flag, Coffee, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -131,39 +130,33 @@ export function EmojiPicker({ value, onChange, className }: EmojiPickerProps) {
 
   return (
     <div ref={containerRef} className={cn("relative", className)}>
-      <motion.button
+      <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "w-full h-12 px-4 py-3 rounded-xl",
           "bg-white/[0.03] backdrop-blur-sm",
-          "border border-white/10 hover:border-white/20",
+          "border border-white/[0.08] hover:border-white/20",
           "flex items-center justify-center gap-2",
-          "transition-all duration-200",
+          "transition-colors duration-150",
           "text-2xl",
           "cursor-pointer group",
           isOpen && "border-white/30 bg-white/[0.05]"
         )}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
       >
         <span>{value || "📦"}</span>
-      </motion.button>
+      </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
+      {isOpen && (
+          <div
             className={cn(
               "absolute z-[100] top-full left-0 mt-2 w-80",
               "rounded-xl",
               "bg-background/95 backdrop-blur-xl",
-              "border border-white/10",
+              "border border-white/[0.08]",
               "shadow-xl shadow-black/20",
-              "overflow-hidden"
+              "overflow-hidden",
+              "animate-scale-in"
             )}
           >
             {/* Search */}
@@ -190,24 +183,22 @@ export function EmojiPicker({ value, onChange, className }: EmojiPickerProps) {
             {!searchQuery && (
               <div className="flex gap-0.5 px-2 py-1.5 border-b border-white/5 bg-white/[0.02] overflow-x-auto scrollbar-none">
                 {categories.map((cat) => (
-                  <motion.button
+                  <button
                     key={cat.id}
                     type="button"
                     onClick={() => setActiveCategory(cat.id)}
                     disabled={cat.id === "recent" && cat.emojis.length === 0}
                     className={cn(
-                      "flex-shrink-0 p-2 rounded-lg transition-all duration-150",
+                      "flex-shrink-0 p-2 rounded-lg transition-colors duration-150",
                       activeCategory === cat.id
                         ? "bg-white/10 text-foreground"
                         : "text-muted-foreground hover:bg-white/5 hover:text-foreground/80",
                       cat.id === "recent" && cat.emojis.length === 0 && "opacity-40 cursor-not-allowed"
                     )}
-                    whileHover={{ scale: cat.id === "recent" && cat.emojis.length === 0 ? 1 : 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                     title={cat.name}
                   >
                     {cat.icon}
-                  </motion.button>
+                  </button>
                 ))}
               </div>
             )}
@@ -232,31 +223,26 @@ export function EmojiPicker({ value, onChange, className }: EmojiPickerProps) {
             {/* Emoji Grid */}
             <div className="p-2 max-h-64 overflow-y-auto">
               {displayEmojis.length > 0 ? (
-                <motion.div
+                <div
                   key={activeCategory + searchQuery}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.1 }}
                   className="grid grid-cols-8 gap-1"
                 >
                   {displayEmojis.map((emoji, index) => (
-                    <motion.button
+                    <button
                       key={`${emoji}-${index}`}
                       type="button"
                       onClick={() => handleEmojiSelect(emoji)}
                       className={cn(
                         "w-9 h-9 flex items-center justify-center text-xl rounded-lg",
-                        "transition-all duration-150",
-                        "hover:bg-white/10",
+                        "transition-all duration-100",
+                        "hover:bg-white/10 hover:scale-110 active:scale-95",
                         value === emoji && "bg-white/10 ring-1 ring-white/20"
                       )}
-                      whileHover={{ scale: 1.2 }}
-                      whileTap={{ scale: 0.9 }}
                     >
                       {emoji}
-                    </motion.button>
+                    </button>
                   ))}
-                </motion.div>
+                </div>
               ) : (
                 <div className="py-8 text-center text-muted-foreground text-sm">
                   {activeCategory === "recent"
@@ -287,9 +273,8 @@ export function EmojiPicker({ value, onChange, className }: EmojiPickerProps) {
                 />
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </div>
   );
 }
