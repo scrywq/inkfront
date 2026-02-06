@@ -91,12 +91,7 @@ export function Modal({
               
               {/* Header */}
               {title && (
-                <motion.div 
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1, duration: 0.3 }}
-                  className="relative px-6 pt-6 pb-4 border-b border-white/[0.06]"
-                >
+                <div className="relative px-6 pt-6 pb-4 border-b border-white/[0.06]">
                   <div className="pr-8">
                     <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
                     {description && (
@@ -105,38 +100,29 @@ export function Modal({
                   </div>
                   
                   {/* Close button */}
-                  <motion.button
+                  <button
                     onClick={onClose}
-                    className="absolute right-4 top-4 p-2 rounded-xl hover:bg-white/10 transition-all duration-200 group"
+                    className="absolute right-4 top-4 p-2 rounded-xl hover:bg-white/10 active:scale-95 transition-all duration-200 group"
                     aria-label="Fechar modal"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
                   >
                     <X className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-                  </motion.button>
-                </motion.div>
+                  </button>
+                </div>
               )}
               
               {/* Content */}
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.15, duration: 0.3 }}
-                className="relative p-6"
-              >
+              <div className="relative p-6">
                 {!title && (
-                  <motion.button
+                  <button
                     onClick={onClose}
-                    className="absolute right-4 top-4 p-2 rounded-xl hover:bg-white/10 transition-all duration-200 group z-10"
+                    className="absolute right-4 top-4 p-2 rounded-xl hover:bg-white/10 active:scale-95 transition-all duration-200 group z-10"
                     aria-label="Fechar modal"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
                   >
                     <X className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-                  </motion.button>
+                  </button>
                 )}
                 {children}
-              </motion.div>
+              </div>
             </motion.div>
           </div>
         </>

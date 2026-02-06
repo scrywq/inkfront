@@ -65,13 +65,9 @@ export function Sidebar({ isOpen, onClose, collapsed, onToggleCollapse }: Sideba
         collapsed && "justify-center px-2"
       )}>
         {!collapsed && (
-          <motion.span 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-lg font-semibold tracking-tight"
-          >
+          <span className="text-lg font-semibold tracking-tight animate-fade-in">
             inkCloud
-          </motion.span>
+          </span>
         )}
         <button
           onClick={onToggleCollapse}
@@ -109,13 +105,9 @@ export function Sidebar({ isOpen, onClose, collapsed, onToggleCollapse }: Sideba
               >
                 <item.icon className={cn("w-5 h-5 flex-shrink-0", isActive(item.route) && "text-foreground")} />
                 {!collapsed && (
-                  <motion.span 
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="text-sm font-medium"
-                  >
+                  <span className="text-sm font-medium animate-fade-in">
                     {item.label}
-                  </motion.span>
+                  </span>
                 )}
               </NavLink>
             </li>

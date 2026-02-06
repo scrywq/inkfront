@@ -112,7 +112,7 @@ export function ColorPicker({ value, onChange, label, className }: ColorPickerPr
             <span className="flex-1 text-sm font-mono uppercase text-left">
               {value || "#5865F2"}
             </span>
-          </motion.button>
+          </button>
         </PopoverTrigger>
         
         <PopoverContent 

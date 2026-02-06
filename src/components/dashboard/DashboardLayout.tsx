@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { motion } from "framer-motion";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { cn } from "@/lib/utils";
@@ -40,15 +39,12 @@ function DashboardLayoutContent() {
           sidebarCollapsed ? "lg:pl-16" : "lg:pl-64"
         )}
       >
-        <motion.div
+        <div
           key={tenantId || "preview"}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="p-4 lg:p-6"
+          className="p-4 lg:p-6 animate-fade-up"
         >
           <Outlet />
-        </motion.div>
+        </div>
       </main>
     </div>
   );

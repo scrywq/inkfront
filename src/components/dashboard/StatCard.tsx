@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,13 +22,12 @@ export function StatCard({
   className,
 }: StatCardProps) {
   return (
-    <motion.div
-      whileHover={{ scale: 1.01 }}
-      transition={{ duration: 0.2 }}
+    <div
       className={cn(
         "relative overflow-hidden rounded-2xl p-5",
         "bg-white/[0.03] border border-white/[0.06]",
         "backdrop-blur-sm",
+        "hover:scale-[1.01] transition-transform duration-200",
         className
       )}
     >
@@ -60,6 +58,6 @@ export function StatCard({
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }
