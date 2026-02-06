@@ -1,9 +1,8 @@
-import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { forwardRef } from "react";
+import { forwardRef, type ButtonHTMLAttributes } from "react";
 import { Loader2 } from "lucide-react";
 
-interface GlassButtonProps extends HTMLMotionProps<"button"> {
+interface GlassButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "default" | "primary" | "ghost";
   size?: "sm" | "md" | "lg";
   loading?: boolean;
@@ -25,23 +24,20 @@ const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(
     };
 
     return (
-      <motion.button
+      <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center gap-2.5 font-medium rounded-2xl focus-ring disabled:opacity-50 disabled:pointer-events-none",
+          "inline-flex items-center justify-center gap-2.5 font-medium rounded-2xl focus-ring disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] transition-transform duration-100",
           variants[variant],
           sizes[size],
           className
         )}
-        whileTap={{ scale: 0.98 }}
-        whileHover={{ scale: 1.01 }}
-        transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
         disabled={disabled || loading}
         {...props}
       >
         {loading && <Loader2 className="w-4 h-4 animate-spin" />}
         {children}
-      </motion.button>
+      </button>
     );
   }
 );

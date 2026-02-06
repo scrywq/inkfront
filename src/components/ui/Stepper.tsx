@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,21 +25,12 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
           return (
             <div key={step.id} className="flex items-center flex-1">
               <div className="flex flex-col items-center">
-                <motion.div
-                  initial={false}
-                  animate={{
-                    scale: isCurrent ? 1.1 : 1,
-                    backgroundColor: isCompleted 
-                      ? "hsl(var(--primary))" 
-                      : isCurrent 
-                        ? "hsl(var(--surface-3))" 
-                        : "hsl(var(--surface-2))",
-                  }}
+                <div
                   className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center border transition-colors duration-300",
-                    isCompleted && "border-primary",
-                    isCurrent && "border-white/30",
-                    !isCompleted && !isCurrent && "border-white/10"
+                    "w-10 h-10 rounded-full flex items-center justify-center border transition-all duration-300",
+                    isCompleted && "border-primary bg-primary scale-100",
+                    isCurrent && "border-white/30 bg-[hsl(var(--surface-3))] scale-110",
+                    !isCompleted && !isCurrent && "border-white/10 bg-[hsl(var(--surface-2))]"
                   )}
                 >
                   {isCompleted ? (
@@ -53,7 +43,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                       {step.id}
                     </span>
                   )}
-                </motion.div>
+                </div>
                 <div className="mt-3 text-center">
                   <p className={cn(
                     "text-sm font-medium transition-colors",
@@ -71,14 +61,11 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
               
               {!isLast && (
                 <div className="flex-1 h-px mx-4 mt-[-2rem]">
-                  <motion.div
-                    initial={false}
-                    animate={{
-                      scaleX: isCompleted ? 1 : 0,
-                    }}
-                    transition={{ duration: 0.3 }}
-                    className="h-full bg-primary origin-left"
-                    style={{ transformOrigin: "left" }}
+                  <div
+                    className={cn(
+                      "h-full bg-primary origin-left transition-transform duration-300",
+                      isCompleted ? "scale-x-100" : "scale-x-0"
+                    )}
                   />
                   <div className="h-px bg-white/10 -mt-px" />
                 </div>
