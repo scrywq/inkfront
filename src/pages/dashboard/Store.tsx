@@ -1427,31 +1427,44 @@ export default function StorePage() {
         </TabsContent>
 
         <TabsContent value="balance">
-          <GlassCard className="p-5" hover={false}>
-            <SectionHeader
-              title="Saldo & Cashback"
-              description="Configurações completas do sistema de saldo e cashback"
-            />
-            {balanceLoading && <div className="text-sm text-muted-foreground mt-3">Carregando...</div>}
-            {balanceError && <div className="text-sm text-destructive mt-3">{balanceError}</div>}
+          <div className="space-y-6">
+            {balanceLoading && <div className="text-sm text-muted-foreground">Carregando...</div>}
+            {balanceError && <div className="text-sm text-destructive">{balanceError}</div>}
 
-            <Tabs value={balanceTab} onValueChange={setBalanceTab} className="mt-4">
-              <TabsList className="mb-5 bg-white/[0.03] border border-white/[0.06] p-1 rounded-xl flex flex-wrap gap-1 h-auto">
-                <TabsTrigger value="saldo-config" className="rounded-lg data-[state=active]:bg-white/10 transition-colors duration-150 gap-2 text-xs"><CreditCard className="w-3.5 h-3.5" />Saldo</TabsTrigger>
-                <TabsTrigger value="saldo-panel" className="rounded-lg data-[state=active]:bg-white/10 transition-colors duration-150 gap-2 text-xs"><Send className="w-3.5 h-3.5" />Painel de Depósito</TabsTrigger>
-                <TabsTrigger value="saldo-admin" className="rounded-lg data-[state=active]:bg-white/10 transition-colors duration-150 gap-2 text-xs"><SettingsIcon className="w-3.5 h-3.5" />Admin</TabsTrigger>
-                <TabsTrigger value="saldo-users" className="rounded-lg data-[state=active]:bg-white/10 transition-colors duration-150 gap-2 text-xs"><Users className="w-3.5 h-3.5" />Saldos dos Clientes</TabsTrigger>
-                <TabsTrigger value="cashback" className="rounded-lg data-[state=active]:bg-white/10 transition-colors duration-150 gap-2 text-xs"><Gift className="w-3.5 h-3.5" />Cashback</TabsTrigger>
+            <Tabs value={balanceTab} onValueChange={setBalanceTab} className="space-y-6">
+              <TabsList className="bg-white/[0.03] border border-white/5 p-1 rounded-xl flex flex-wrap gap-1 h-auto">
+                <TabsTrigger value="saldo-config" className="rounded-lg data-[state=active]:bg-white/10 gap-2 text-xs">
+                  <CreditCard className="w-3.5 h-3.5" />
+                  Saldo
+                </TabsTrigger>
+                <TabsTrigger value="saldo-panel" className="rounded-lg data-[state=active]:bg-white/10 gap-2 text-xs">
+                  <Send className="w-3.5 h-3.5" />
+                  Painel de Deposito
+                </TabsTrigger>
+                <TabsTrigger value="saldo-admin" className="rounded-lg data-[state=active]:bg-white/10 gap-2 text-xs">
+                  <SettingsIcon className="w-3.5 h-3.5" />
+                  Admin
+                </TabsTrigger>
+                <TabsTrigger value="saldo-users" className="rounded-lg data-[state=active]:bg-white/10 gap-2 text-xs">
+                  <Users className="w-3.5 h-3.5" />
+                  Saldos dos Clientes
+                </TabsTrigger>
+                <TabsTrigger value="cashback" className="rounded-lg data-[state=active]:bg-white/10 gap-2 text-xs">
+                  <Gift className="w-3.5 h-3.5" />
+                  Cashback
+                </TabsTrigger>
               </TabsList>
 
-                <TabsContent value="saldo-config">
+              {/* ── Saldo Config ── */}
+              <TabsContent value="saldo-config">
+                <GlassCard className="p-5" hover={false}>
+                  <SectionHeader
+                    title="Configuracao de Saldo"
+                    description="Ative o sistema de saldo e configure bonus, regras de uso e depositos"
+                  />
                   {saldoConfig && (
-                    <div className="space-y-4">
-                      <div className="flex justify-end">
-                        <GlassButton size="sm" onClick={handleSaldoSave} disabled={saldoSaving}>
-                          {saldoSaving ? "Salvando..." : "Salvar"}
-                        </GlassButton>
-                      </div>
+                    <div className="space-y-6 mt-2">
+                      {/* Status toggle */}
                       <SettingsRow
                         label="Saldo ativo"
                         description="Ativar ou desativar o sistema de saldo"
@@ -1464,102 +1477,109 @@ export default function StorePage() {
                           />
                         }
                       />
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Bônus</label>
-                          <GlassSelect
-                            value={saldoConfig.bonus.type}
-                            onValueChange={(value) =>
-                              setSaldoConfig((prev) =>
-                                prev ? { ...prev, bonus: { ...prev.bonus, type: value as any } } : prev
-                              )
-                            }
-                          >
-                            <GlassSelectTrigger>
-                              <GlassSelectValue placeholder="Selecione..." />
-                            </GlassSelectTrigger>
-                            <GlassSelectContent>
-                              <GlassSelectItem value="disabled">Desativado</GlassSelectItem>
-                              <GlassSelectItem value="percentage">Percentual</GlassSelectItem>
-                              <GlassSelectItem value="fixed">Fixo</GlassSelectItem>
-                            </GlassSelectContent>
-                          </GlassSelect>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Valor do bônus</label>
-                          <input
-                            type="number"
-                            step="0.01"
-                            value={saldoConfig.bonus.value}
-                            onChange={(e) =>
-                              setSaldoConfig((prev) =>
-                                prev ? { ...prev, bonus: { ...prev.bonus, value: Number(e.target.value) } } : prev
-                              )
-                            }
-                            className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                          />
-                        </div>
-                      </div>
 
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Máx. uso (%)</label>
-                          <input
-                            type="number"
-                            value={saldoConfig.rules.max_usage_percentage}
-                            onChange={(e) =>
-                              setSaldoConfig((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      rules: { ...prev.rules, max_usage_percentage: Number(e.target.value) },
-                                    }
-                                  : prev
-                              )
-                            }
-                            className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                          />
+                      {/* Bonus section */}
+                      <CollapsibleSection icon={Sparkles} title="Bonus" description="Configure o bonus de deposito">
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Tipo de bonus</label>
+                            <GlassSelect
+                              value={saldoConfig.bonus.type}
+                              onValueChange={(value) =>
+                                setSaldoConfig((prev) =>
+                                  prev ? { ...prev, bonus: { ...prev.bonus, type: value as any } } : prev
+                                )
+                              }
+                            >
+                              <GlassSelectTrigger>
+                                <GlassSelectValue placeholder="Selecione..." />
+                              </GlassSelectTrigger>
+                              <GlassSelectContent>
+                                <GlassSelectItem value="disabled">Desativado</GlassSelectItem>
+                                <GlassSelectItem value="percentage">Percentual</GlassSelectItem>
+                                <GlassSelectItem value="fixed">Fixo</GlassSelectItem>
+                              </GlassSelectContent>
+                            </GlassSelect>
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Valor do bonus</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={saldoConfig.bonus.value}
+                              onChange={(e) =>
+                                setSaldoConfig((prev) =>
+                                  prev ? { ...prev, bonus: { ...prev.bonus, value: Number(e.target.value) } } : prev
+                                )
+                              }
+                              className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
+                            />
+                          </div>
                         </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Máx. uso (R$)</label>
-                          <input
-                            type="number"
-                            step="0.01"
-                            value={saldoConfig.rules.max_usage_amount ?? ""}
-                            onChange={(e) =>
-                              setSaldoConfig((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      rules: {
-                                        ...prev.rules,
-                                        max_usage_amount: e.target.value ? Number(e.target.value) : null,
-                                      },
-                                    }
-                                  : prev
-                              )
-                            }
-                            className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Mín. uso (R$)</label>
-                          <input
-                            type="number"
-                            step="0.01"
-                            value={saldoConfig.rules.min_usage_amount}
-                            onChange={(e) =>
-                              setSaldoConfig((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      rules: { ...prev.rules, min_usage_amount: Number(e.target.value) },
-                                    }
-                                  : prev
-                              )
-                            }
-                            className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                          />
+                      </CollapsibleSection>
+
+                      {/* Usage rules */}
+                      <CollapsibleSection icon={ScrollText} title="Regras de Uso" description="Limites e permissoes de uso do saldo">
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Max. uso (%)</label>
+                            <input
+                              type="number"
+                              value={saldoConfig.rules.max_usage_percentage}
+                              onChange={(e) =>
+                                setSaldoConfig((prev) =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        rules: { ...prev.rules, max_usage_percentage: Number(e.target.value) },
+                                      }
+                                    : prev
+                                )
+                              }
+                              className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Max. uso (R$)</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={saldoConfig.rules.max_usage_amount ?? ""}
+                              onChange={(e) =>
+                                setSaldoConfig((prev) =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        rules: {
+                                          ...prev.rules,
+                                          max_usage_amount: e.target.value ? Number(e.target.value) : null,
+                                        },
+                                      }
+                                    : prev
+                                )
+                              }
+                              className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Min. uso (R$)</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={saldoConfig.rules.min_usage_amount}
+                              onChange={(e) =>
+                                setSaldoConfig((prev) =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        rules: { ...prev.rules, min_usage_amount: Number(e.target.value) },
+                                      }
+                                    : prev
+                                )
+                              }
+                              className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
+                            />
+                          </div>
                         </div>
                         <SettingsRow
                           label="Pagamento parcial"
@@ -1575,110 +1595,128 @@ export default function StorePage() {
                             />
                           }
                         />
-                      </div>
+                      </CollapsibleSection>
 
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Depósito mínimo (R$)</label>
-                          <input
-                            type="number"
-                            step="0.01"
-                            value={saldoConfig.deposit_settings.min_deposit}
-                            onChange={(e) =>
-                              setSaldoConfig((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      deposit_settings: {
-                                        ...prev.deposit_settings,
-                                        min_deposit: Number(e.target.value),
-                                      },
-                                    }
-                                  : prev
-                              )
-                            }
-                            className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                          />
+                      {/* Deposit settings */}
+                      <CollapsibleSection icon={Wallet} title="Deposito" description="Limites de deposito, notificacao e termos">
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Deposito minimo (R$)</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={saldoConfig.deposit_settings.min_deposit}
+                              onChange={(e) =>
+                                setSaldoConfig((prev) =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        deposit_settings: {
+                                          ...prev.deposit_settings,
+                                          min_deposit: Number(e.target.value),
+                                        },
+                                      }
+                                    : prev
+                                )
+                              }
+                              className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Deposito maximo (R$)</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={saldoConfig.deposit_settings.max_deposit}
+                              onChange={(e) =>
+                                setSaldoConfig((prev) =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        deposit_settings: {
+                                          ...prev.deposit_settings,
+                                          max_deposit: Number(e.target.value),
+                                        },
+                                      }
+                                    : prev
+                                )
+                              }
+                              className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Cargo de notificacao</label>
+                            <GlassSelect
+                              value={saldoConfig.deposit_settings.notify_role_id || ""}
+                              onValueChange={(value) =>
+                                setSaldoConfig((prev) =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        deposit_settings: { ...prev.deposit_settings, notify_role_id: value },
+                                      }
+                                    : prev
+                                )
+                              }
+                            >
+                              <GlassSelectTrigger>
+                                <GlassSelectValue placeholder="Selecione um cargo" />
+                              </GlassSelectTrigger>
+                              <GlassSelectContent>
+                                {roles.map((role) => (
+                                  <GlassSelectItem key={role.id} value={role.id}>
+                                    {role.name}
+                                  </GlassSelectItem>
+                                ))}
+                              </GlassSelectContent>
+                            </GlassSelect>
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Termos</label>
+                            <input
+                              type="text"
+                              value={saldoConfig.deposit_settings.terms || ""}
+                              onChange={(e) =>
+                                setSaldoConfig((prev) =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        deposit_settings: { ...prev.deposit_settings, terms: e.target.value },
+                                      }
+                                    : prev
+                                )
+                              }
+                              className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
+                            />
+                          </div>
                         </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Depósito máximo (R$)</label>
-                          <input
-                            type="number"
-                            step="0.01"
-                            value={saldoConfig.deposit_settings.max_deposit}
-                            onChange={(e) =>
-                              setSaldoConfig((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      deposit_settings: {
-                                        ...prev.deposit_settings,
-                                        max_deposit: Number(e.target.value),
-                                      },
-                                    }
-                                  : prev
-                              )
-                            }
-                            className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Cargo de notificação</label>
-                          <GlassSelect
-                            value={saldoConfig.deposit_settings.notify_role_id || ""}
-                            onValueChange={(value) =>
-                              setSaldoConfig((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      deposit_settings: { ...prev.deposit_settings, notify_role_id: value },
-                                    }
-                                  : prev
-                              )
-                            }
-                          >
-                            <GlassSelectTrigger>
-                              <GlassSelectValue placeholder="Selecione um cargo" />
-                            </GlassSelectTrigger>
-                            <GlassSelectContent>
-                              {roles.map((role) => (
-                                <GlassSelectItem key={role.id} value={role.id}>
-                                  {role.name}
-                                </GlassSelectItem>
-                              ))}
-                            </GlassSelectContent>
-                          </GlassSelect>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Termos</label>
-                          <input
-                            type="text"
-                            value={saldoConfig.deposit_settings.terms || ""}
-                            onChange={(e) =>
-                              setSaldoConfig((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      deposit_settings: { ...prev.deposit_settings, terms: e.target.value },
-                                    }
-                                  : prev
-                              )
-                            }
-                            className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                          />
-                        </div>
+                      </CollapsibleSection>
+
+                      {/* Save footer */}
+                      <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+                        <GlassButton size="sm" variant="primary" onClick={handleSaldoSave} disabled={saldoSaving}>
+                          {saldoSaving ? "Salvando..." : "Salvar Configuracoes"}
+                        </GlassButton>
                       </div>
                     </div>
                   )}
-                </TabsContent>
+                </GlassCard>
+              </TabsContent>
 
-                <TabsContent value="saldo-panel">
+              {/* ── Deposit Panel ── */}
+              <TabsContent value="saldo-panel">
+                <GlassCard className="p-5" hover={false}>
+                  <SectionHeader
+                    title="Painel de Deposito"
+                    description="Configure a mensagem e botao do painel de deposito no Discord"
+                  />
                   {saldoConfig && (
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
+                    <div className="space-y-6 mt-2">
+                      {/* Message style */}
+                      <div className="flex items-center justify-between py-3 border-b border-white/5">
                         <div>
-                          <div className="text-sm font-medium">Estilo do painel</div>
-                          <div className="text-xs text-muted-foreground">Embed, Texto ou Container</div>
+                          <p className="text-sm font-medium">Estilo da mensagem</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">Embed, Texto ou Container</p>
                         </div>
                         <GlassSelect
                           value={saldoConfig.deposit_panel.message_style}
@@ -1704,13 +1742,270 @@ export default function StorePage() {
                         </GlassSelect>
                       </div>
 
+                      {/* Embed style fields */}
                       {saldoConfig.deposit_panel.message_style === "embed" && (
-                        <div className="grid gap-3 md:grid-cols-2">
-                          <div>
-                            <label className="text-sm font-medium mb-2 block">Título</label>
+                        <CollapsibleSection icon={MessageSquare} title="Conteudo do Embed" description="Titulo, descricao, cor e imagens" defaultOpen>
+                          <div className="grid gap-4 md:grid-cols-2">
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium">Titulo</label>
+                              <input
+                                type="text"
+                                value={saldoConfig.deposit_panel.embed.title}
+                                onChange={(e) =>
+                                  setSaldoConfig((prev) =>
+                                    prev
+                                      ? {
+                                          ...prev,
+                                          deposit_panel: {
+                                            ...prev.deposit_panel,
+                                            embed: { ...prev.deposit_panel.embed, title: e.target.value },
+                                          },
+                                        }
+                                      : prev
+                                  )
+                                }
+                                className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium">Cor</label>
+                              <ColorPicker
+                                value={saldoConfig.deposit_panel.embed.color}
+                                onChange={(value) =>
+                                  setSaldoConfig((prev) =>
+                                    prev
+                                      ? {
+                                          ...prev,
+                                          deposit_panel: {
+                                            ...prev.deposit_panel,
+                                            embed: { ...prev.deposit_panel.embed, color: value },
+                                          },
+                                        }
+                                      : prev
+                                  )
+                                }
+                              />
+                            </div>
+                            <div className="md:col-span-2 space-y-2">
+                              <label className="text-sm font-medium">Descricao</label>
+                              <textarea
+                                value={saldoConfig.deposit_panel.embed.description}
+                                onChange={(e) =>
+                                  setSaldoConfig((prev) =>
+                                    prev
+                                      ? {
+                                          ...prev,
+                                          deposit_panel: {
+                                            ...prev.deposit_panel,
+                                            embed: { ...prev.deposit_panel.embed, description: e.target.value },
+                                          },
+                                        }
+                                      : prev
+                                  )
+                                }
+                                rows={3}
+                                className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors resize-none"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium">Imagem</label>
+                              <div className="flex items-center gap-3">
+                                <label className="flex items-center gap-2 px-4 py-2.5 text-xs font-medium rounded-xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.06] transition-colors cursor-pointer">
+                                  <Eye className="w-3.5 h-3.5" />
+                                  Escolher arquivo
+                                  <input
+                                    type="file"
+                                    accept="image/png,image/jpeg,image/webp,image/gif"
+                                    onChange={(e) => handleSaldoImage("embed_image", e)}
+                                    className="hidden"
+                                  />
+                                </label>
+                                {(saldoEmbedPreview || saldoConfig.deposit_panel.embed.image_url) && (
+                                  <img
+                                    src={saldoEmbedPreview || saldoConfig.deposit_panel.embed.image_url || ""}
+                                    alt="Preview"
+                                    className="h-10 w-10 rounded-lg object-cover border border-white/10"
+                                  />
+                                )}
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium">Thumbnail</label>
+                              <div className="flex items-center gap-3">
+                                <label className="flex items-center gap-2 px-4 py-2.5 text-xs font-medium rounded-xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.06] transition-colors cursor-pointer">
+                                  <Eye className="w-3.5 h-3.5" />
+                                  Escolher arquivo
+                                  <input
+                                    type="file"
+                                    accept="image/png,image/jpeg,image/webp,image/gif"
+                                    onChange={(e) => handleSaldoImage("embed_thumb", e)}
+                                    className="hidden"
+                                  />
+                                </label>
+                                {(saldoEmbedThumbPreview || saldoConfig.deposit_panel.embed.thumbnail_url) && (
+                                  <img
+                                    src={saldoEmbedThumbPreview || saldoConfig.deposit_panel.embed.thumbnail_url || ""}
+                                    alt="Preview"
+                                    className="h-10 w-10 rounded-lg object-cover border border-white/10"
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </CollapsibleSection>
+                      )}
+
+                      {/* Content style fields */}
+                      {saldoConfig.deposit_panel.message_style === "content" && (
+                        <CollapsibleSection icon={FileText} title="Conteudo da Mensagem" description="Texto e imagem da mensagem" defaultOpen>
+                          <div className="space-y-4">
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium">Conteudo</label>
+                              <textarea
+                                value={saldoConfig.deposit_panel.content.content}
+                                onChange={(e) =>
+                                  setSaldoConfig((prev) =>
+                                    prev
+                                      ? {
+                                          ...prev,
+                                          deposit_panel: {
+                                            ...prev.deposit_panel,
+                                            content: { ...prev.deposit_panel.content, content: e.target.value },
+                                          },
+                                        }
+                                      : prev
+                                  )
+                                }
+                                rows={3}
+                                className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors resize-none"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium">Imagem</label>
+                              <div className="flex items-center gap-3">
+                                <label className="flex items-center gap-2 px-4 py-2.5 text-xs font-medium rounded-xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.06] transition-colors cursor-pointer">
+                                  <Eye className="w-3.5 h-3.5" />
+                                  Escolher arquivo
+                                  <input
+                                    type="file"
+                                    accept="image/png,image/jpeg,image/webp,image/gif"
+                                    onChange={(e) => handleSaldoImage("content_image", e)}
+                                    className="hidden"
+                                  />
+                                </label>
+                                {(saldoContentImagePreview || saldoConfig.deposit_panel.content.image_url) && (
+                                  <img
+                                    src={saldoContentImagePreview || saldoConfig.deposit_panel.content.image_url || ""}
+                                    alt="Preview"
+                                    className="h-10 w-10 rounded-lg object-cover border border-white/10"
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </CollapsibleSection>
+                      )}
+
+                      {/* Container style fields */}
+                      {saldoConfig.deposit_panel.message_style === "container" && (
+                        <CollapsibleSection icon={Boxes} title="Conteudo do Container" description="Texto, cor e imagens do container" defaultOpen>
+                          <div className="grid gap-4 md:grid-cols-2">
+                            <div className="md:col-span-2 space-y-2">
+                              <label className="text-sm font-medium">Conteudo</label>
+                              <textarea
+                                value={saldoConfig.deposit_panel.container.content}
+                                onChange={(e) =>
+                                  setSaldoConfig((prev) =>
+                                    prev
+                                      ? {
+                                          ...prev,
+                                          deposit_panel: {
+                                            ...prev.deposit_panel,
+                                            container: { ...prev.deposit_panel.container, content: e.target.value },
+                                          },
+                                        }
+                                      : prev
+                                  )
+                                }
+                                rows={3}
+                                className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors resize-none"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium">Cor</label>
+                              <ColorPicker
+                                value={saldoConfig.deposit_panel.container.color}
+                                onChange={(value) =>
+                                  setSaldoConfig((prev) =>
+                                    prev
+                                      ? {
+                                          ...prev,
+                                          deposit_panel: {
+                                            ...prev.deposit_panel,
+                                            container: { ...prev.deposit_panel.container, color: value },
+                                          },
+                                        }
+                                      : prev
+                                  )
+                                }
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium">Imagem</label>
+                              <div className="flex items-center gap-3">
+                                <label className="flex items-center gap-2 px-4 py-2.5 text-xs font-medium rounded-xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.06] transition-colors cursor-pointer">
+                                  <Eye className="w-3.5 h-3.5" />
+                                  Escolher arquivo
+                                  <input
+                                    type="file"
+                                    accept="image/png,image/jpeg,image/webp,image/gif"
+                                    onChange={(e) => handleSaldoImage("container_image", e)}
+                                    className="hidden"
+                                  />
+                                </label>
+                                {(saldoContainerImagePreview || saldoConfig.deposit_panel.container.image_url) && (
+                                  <img
+                                    src={saldoContainerImagePreview || saldoConfig.deposit_panel.container.image_url || ""}
+                                    alt="Preview"
+                                    className="h-10 w-10 rounded-lg object-cover border border-white/10"
+                                  />
+                                )}
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium">Thumbnail</label>
+                              <div className="flex items-center gap-3">
+                                <label className="flex items-center gap-2 px-4 py-2.5 text-xs font-medium rounded-xl bg-white/[0.04] border border-white/10 hover:bg-white/[0.06] transition-colors cursor-pointer">
+                                  <Eye className="w-3.5 h-3.5" />
+                                  Escolher arquivo
+                                  <input
+                                    type="file"
+                                    accept="image/png,image/jpeg,image/webp,image/gif"
+                                    onChange={(e) => handleSaldoImage("container_thumb", e)}
+                                    className="hidden"
+                                  />
+                                </label>
+                                {(saldoContainerThumbPreview || saldoConfig.deposit_panel.container.thumbnail_url) && (
+                                  <img
+                                    src={saldoContainerThumbPreview || saldoConfig.deposit_panel.container.thumbnail_url || ""}
+                                    alt="Preview"
+                                    className="h-10 w-10 rounded-lg object-cover border border-white/10"
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </CollapsibleSection>
+                      )}
+
+                      {/* Button config */}
+                      <CollapsibleSection icon={QrCode} title="Botao" description="Texto, emoji e estilo do botao">
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Texto do botao</label>
                             <input
                               type="text"
-                              value={saldoConfig.deposit_panel.embed.title}
+                              value={saldoConfig.deposit_panel.button.label}
                               onChange={(e) =>
                                 setSaldoConfig((prev) =>
                                   prev
@@ -1718,7 +2013,7 @@ export default function StorePage() {
                                         ...prev,
                                         deposit_panel: {
                                           ...prev.deposit_panel,
-                                          embed: { ...prev.deposit_panel.embed, title: e.target.value },
+                                          button: { ...prev.deposit_panel.button, label: e.target.value },
                                         },
                                       }
                                     : prev
@@ -1727,10 +2022,10 @@ export default function StorePage() {
                               className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
                             />
                           </div>
-                          <div>
-                            <label className="text-sm font-medium mb-2 block">Cor</label>
-                            <ColorPicker
-                              value={saldoConfig.deposit_panel.embed.color}
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Emoji</label>
+                            <EmojiPicker
+                              value={saldoConfig.deposit_panel.button.emoji || ""}
                               onChange={(value) =>
                                 setSaldoConfig((prev) =>
                                   prev
@@ -1738,7 +2033,7 @@ export default function StorePage() {
                                         ...prev,
                                         deposit_panel: {
                                           ...prev.deposit_panel,
-                                          embed: { ...prev.deposit_panel.embed, color: value },
+                                          button: { ...prev.deposit_panel.button, emoji: value },
                                         },
                                       }
                                     : prev
@@ -1746,420 +2041,302 @@ export default function StorePage() {
                               }
                             />
                           </div>
-                          <div className="md:col-span-2">
-                            <label className="text-sm font-medium mb-2 block">Descrição</label>
-                            <textarea
-                              value={saldoConfig.deposit_panel.embed.description}
-                              onChange={(e) =>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Estilo do botao</label>
+                            <GlassSelect
+                              value={saldoConfig.deposit_panel.button.style}
+                              onValueChange={(value) =>
                                 setSaldoConfig((prev) =>
                                   prev
                                     ? {
                                         ...prev,
                                         deposit_panel: {
                                           ...prev.deposit_panel,
-                                          embed: { ...prev.deposit_panel.embed, description: e.target.value },
+                                          button: { ...prev.deposit_panel.button, style: value as any },
                                         },
                                       }
                                     : prev
                                 )
                               }
-                              rows={3}
-                              className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors resize-none"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-sm font-medium mb-2 block">Imagem</label>
-                            <input
-                              type="file"
-                              accept="image/png,image/jpeg,image/webp,image/gif"
-                              onChange={(e) => handleSaldoImage("embed_image", e)}
-                              className="block w-full text-xs text-muted-foreground"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-sm font-medium mb-2 block">Thumbnail</label>
-                            <input
-                              type="file"
-                              accept="image/png,image/jpeg,image/webp,image/gif"
-                              onChange={(e) => handleSaldoImage("embed_thumb", e)}
-                              className="block w-full text-xs text-muted-foreground"
-                            />
-                          </div>
-                        </div>
-                      )}
-
-                      {saldoConfig.deposit_panel.message_style === "content" && (
-                        <div className="grid gap-3 md:grid-cols-2">
-                          <div className="md:col-span-2">
-                            <label className="text-sm font-medium mb-2 block">Conteúdo</label>
-                            <textarea
-                              value={saldoConfig.deposit_panel.content.content}
-                              onChange={(e) =>
-                                setSaldoConfig((prev) =>
-                                  prev
-                                    ? {
-                                        ...prev,
-                                        deposit_panel: {
-                                          ...prev.deposit_panel,
-                                          content: { ...prev.deposit_panel.content, content: e.target.value },
-                                        },
-                                      }
-                                    : prev
-                                )
-                              }
-                              rows={3}
-                              className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors resize-none"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-sm font-medium mb-2 block">Imagem</label>
-                            <input
-                              type="file"
-                              accept="image/png,image/jpeg,image/webp,image/gif"
-                              onChange={(e) => handleSaldoImage("content_image", e)}
-                              className="block w-full text-xs text-muted-foreground"
-                            />
-                          </div>
-                        </div>
-                      )}
-
-                      {saldoConfig.deposit_panel.message_style === "container" && (
-                        <div className="grid gap-3 md:grid-cols-2">
-                          <div className="md:col-span-2">
-                            <label className="text-sm font-medium mb-2 block">Conteúdo</label>
-                            <textarea
-                              value={saldoConfig.deposit_panel.container.content}
-                              onChange={(e) =>
-                                setSaldoConfig((prev) =>
-                                  prev
-                                    ? {
-                                        ...prev,
-                                        deposit_panel: {
-                                          ...prev.deposit_panel,
-                                          container: { ...prev.deposit_panel.container, content: e.target.value },
-                                        },
-                                      }
-                                    : prev
-                                )
-                              }
-                              rows={3}
-                              className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors resize-none"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-sm font-medium mb-2 block">Cor</label>
-                            <ColorPicker
-                              value={saldoConfig.deposit_panel.container.color}
-                              onChange={(value) =>
-                                setSaldoConfig((prev) =>
-                                  prev
-                                    ? {
-                                        ...prev,
-                                        deposit_panel: {
-                                          ...prev.deposit_panel,
-                                          container: { ...prev.deposit_panel.container, color: value },
-                                        },
-                                      }
-                                    : prev
-                                )
-                              }
-                            />
-                          </div>
-                          <div>
-                            <label className="text-sm font-medium mb-2 block">Imagem</label>
-                            <input
-                              type="file"
-                              accept="image/png,image/jpeg,image/webp,image/gif"
-                              onChange={(e) => handleSaldoImage("container_image", e)}
-                              className="block w-full text-xs text-muted-foreground"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-sm font-medium mb-2 block">Thumbnail</label>
-                            <input
-                              type="file"
-                              accept="image/png,image/jpeg,image/webp,image/gif"
-                              onChange={(e) => handleSaldoImage("container_thumb", e)}
-                              className="block w-full text-xs text-muted-foreground"
-                            />
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Botão</label>
-                          <input
-                            type="text"
-                            value={saldoConfig.deposit_panel.button.label}
-                            onChange={(e) =>
-                              setSaldoConfig((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      deposit_panel: {
-                                        ...prev.deposit_panel,
-                                        button: { ...prev.deposit_panel.button, label: e.target.value },
-                                      },
-                                    }
-                                  : prev
-                              )
-                            }
-                            className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Emoji</label>
-                          <EmojiPicker
-                            value={saldoConfig.deposit_panel.button.emoji || ""}
-                            onChange={(value) =>
-                              setSaldoConfig((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      deposit_panel: {
-                                        ...prev.deposit_panel,
-                                        button: { ...prev.deposit_panel.button, emoji: value },
-                                      },
-                                    }
-                                  : prev
-                              )
-                            }
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Estilo do botão</label>
-                          <GlassSelect
-                            value={saldoConfig.deposit_panel.button.style}
-                            onValueChange={(value) =>
-                              setSaldoConfig((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      deposit_panel: {
-                                        ...prev.deposit_panel,
-                                        button: { ...prev.deposit_panel.button, style: value as any },
-                                      },
-                                    }
-                                  : prev
-                              )
-                            }
-                          >
-                            <GlassSelectTrigger>
-                              <GlassSelectValue placeholder="Selecione..." />
-                            </GlassSelectTrigger>
-                            <GlassSelectContent>
-                              <GlassSelectItem value="green">Verde</GlassSelectItem>
-                              <GlassSelectItem value="blue">Azul</GlassSelectItem>
-                              <GlassSelectItem value="grey">Cinza</GlassSelectItem>
-                              <GlassSelectItem value="red">Vermelho</GlassSelectItem>
-                            </GlassSelectContent>
-                          </GlassSelect>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Canal do painel</label>
-                          <GlassSelect
-                            value={saldoConfig.deposit_panel.channel_id || ""}
-                            onValueChange={(value) =>
-                              setSaldoConfig((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      deposit_panel: { ...prev.deposit_panel, channel_id: value },
-                                    }
-                                  : prev
-                              )
-                            }
-                          >
-                            <GlassSelectTrigger>
-                              <GlassSelectValue placeholder="Selecione um canal" />
-                            </GlassSelectTrigger>
-                            <GlassSelectContent>
-                              {preferencesChannels.map((channel) => (
-                                <GlassSelectItem key={channel.id} value={channel.id}>
-                                  #{channel.name}
-                                </GlassSelectItem>
-                              ))}
-                            </GlassSelectContent>
-                          </GlassSelect>
-                          <div className="mt-2">
-                            <GlassButton
-                              size="sm"
-                              onClick={handleSendSaldoPanel}
-                              disabled={!saldoConfig.deposit_panel.channel_id || saldoPanelSending}
                             >
-                              {saldoPanelSending ? "Enviando..." : "Enviar painel"}
-                            </GlassButton>
+                              <GlassSelectTrigger>
+                                <GlassSelectValue placeholder="Selecione..." />
+                              </GlassSelectTrigger>
+                              <GlassSelectContent>
+                                <GlassSelectItem value="green">Verde</GlassSelectItem>
+                                <GlassSelectItem value="blue">Azul</GlassSelectItem>
+                                <GlassSelectItem value="grey">Cinza</GlassSelectItem>
+                                <GlassSelectItem value="red">Vermelho</GlassSelectItem>
+                              </GlassSelectContent>
+                            </GlassSelect>
                           </div>
                         </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Categoria (ID)</label>
-                          <input
-                            type="text"
-                            value={saldoConfig.deposit_panel.category_id || ""}
-                            onChange={(e) =>
-                              setSaldoConfig((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      deposit_panel: { ...prev.deposit_panel, category_id: e.target.value },
-                                    }
-                                  : prev
-                              )
-                            }
-                            className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                          />
+                      </CollapsibleSection>
+
+                      {/* Channel & send */}
+                      <CollapsibleSection icon={Send} title="Enviar Painel" description="Selecione o canal e envie o painel" defaultOpen>
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Canal do painel</label>
+                            <GlassSelect
+                              value={saldoConfig.deposit_panel.channel_id || ""}
+                              onValueChange={(value) =>
+                                setSaldoConfig((prev) =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        deposit_panel: { ...prev.deposit_panel, channel_id: value },
+                                      }
+                                    : prev
+                                )
+                              }
+                            >
+                              <GlassSelectTrigger>
+                                <GlassSelectValue placeholder="Selecione um canal" />
+                              </GlassSelectTrigger>
+                              <GlassSelectContent>
+                                {preferencesChannels.map((channel) => (
+                                  <GlassSelectItem key={channel.id} value={channel.id}>
+                                    #{channel.name}
+                                  </GlassSelectItem>
+                                ))}
+                              </GlassSelectContent>
+                            </GlassSelect>
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Categoria (ID)</label>
+                            <input
+                              type="text"
+                              value={saldoConfig.deposit_panel.category_id || ""}
+                              onChange={(e) =>
+                                setSaldoConfig((prev) =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        deposit_panel: { ...prev.deposit_panel, category_id: e.target.value },
+                                      }
+                                    : prev
+                                )
+                              }
+                              className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex justify-end pt-2">
+                          <GlassButton
+                            size="sm"
+                            variant="primary"
+                            onClick={handleSendSaldoPanel}
+                            disabled={!saldoConfig.deposit_panel.channel_id || saldoPanelSending}
+                          >
+                            <Send className="w-4 h-4" />
+                            {saldoPanelSending ? "Enviando..." : "Enviar painel"}
+                          </GlassButton>
+                        </div>
+                      </CollapsibleSection>
+
+                      {/* Preview */}
+                      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.015] p-5">
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center">
+                            <Eye className="w-4 h-4 text-muted-foreground" />
+                          </div>
+                          <p className="text-sm font-medium">Preview</p>
+                        </div>
+                        <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                          {saldoConfig.deposit_panel.message_style === "embed" && (
+                            <div className="space-y-2">
+                              <div className="text-sm font-semibold">{saldoConfig.deposit_panel.embed.title}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {saldoConfig.deposit_panel.embed.description}
+                              </div>
+                              <div className="flex gap-2 mt-2">
+                                {(saldoEmbedPreview || saldoConfig.deposit_panel.embed.image_url) && (
+                                  <img
+                                    src={saldoEmbedPreview || saldoConfig.deposit_panel.embed.image_url || ""}
+                                    alt="Imagem"
+                                    className="h-20 rounded-lg object-cover border border-white/10"
+                                  />
+                                )}
+                                {(saldoEmbedThumbPreview || saldoConfig.deposit_panel.embed.thumbnail_url) && (
+                                  <img
+                                    src={saldoEmbedThumbPreview || saldoConfig.deposit_panel.embed.thumbnail_url || ""}
+                                    alt="Thumbnail"
+                                    className="h-20 w-20 rounded-lg object-cover border border-white/10"
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          {saldoConfig.deposit_panel.message_style === "content" && (
+                            <div className="space-y-2">
+                              <div className="text-sm text-muted-foreground">
+                                {saldoConfig.deposit_panel.content.content}
+                              </div>
+                              {(saldoContentImagePreview || saldoConfig.deposit_panel.content.image_url) && (
+                                <img
+                                  src={saldoContentImagePreview || saldoConfig.deposit_panel.content.image_url || ""}
+                                  alt="Imagem"
+                                  className="h-20 rounded-lg object-cover border border-white/10"
+                                />
+                              )}
+                            </div>
+                          )}
+                          {saldoConfig.deposit_panel.message_style === "container" && (
+                            <div className="space-y-2">
+                              <div className="text-sm text-muted-foreground">
+                                {saldoConfig.deposit_panel.container.content}
+                              </div>
+                              <div className="flex gap-2">
+                                {(saldoContainerImagePreview || saldoConfig.deposit_panel.container.image_url) && (
+                                  <img
+                                    src={saldoContainerImagePreview || saldoConfig.deposit_panel.container.image_url || ""}
+                                    alt="Imagem"
+                                    className="h-20 rounded-lg object-cover border border-white/10"
+                                  />
+                                )}
+                                {(saldoContainerThumbPreview || saldoConfig.deposit_panel.container.thumbnail_url) && (
+                                  <img
+                                    src={saldoContainerThumbPreview || saldoConfig.deposit_panel.container.thumbnail_url || ""}
+                                    alt="Thumbnail"
+                                    className="h-20 w-20 rounded-lg object-cover border border-white/10"
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
 
-                      <div className="mt-4 rounded-xl border border-white/10 p-4 bg-white/[0.02]">
-                        <div className="text-sm font-medium mb-2">Preview</div>
-                        {saldoConfig.deposit_panel.message_style === "embed" && (
-                          <div>
-                            <div className="text-sm font-semibold">{saldoConfig.deposit_panel.embed.title}</div>
-                            <div className="text-sm text-muted-foreground">
-                              {saldoConfig.deposit_panel.embed.description}
-                            </div>
-                            <div className="flex gap-2 mt-3">
-                              {(saldoEmbedPreview || saldoConfig.deposit_panel.embed.image_url) && (
-                                <img
-                                  src={saldoEmbedPreview || saldoConfig.deposit_panel.embed.image_url || ""}
-                                  alt="Imagem"
-                                  className="h-24 rounded-md object-cover"
-                                />
-                              )}
-                              {(saldoEmbedThumbPreview || saldoConfig.deposit_panel.embed.thumbnail_url) && (
-                                <img
-                                  src={saldoEmbedThumbPreview || saldoConfig.deposit_panel.embed.thumbnail_url || ""}
-                                  alt="Thumbnail"
-                                  className="h-24 w-24 rounded-md object-cover"
-                                />
-                              )}
-                            </div>
-                          </div>
-                        )}
-                        {saldoConfig.deposit_panel.message_style === "content" && (
-                          <div>
-                            <div className="text-sm text-muted-foreground">
-                              {saldoConfig.deposit_panel.content.content}
-                            </div>
-                            {(saldoContentImagePreview || saldoConfig.deposit_panel.content.image_url) && (
-                              <img
-                                src={saldoContentImagePreview || saldoConfig.deposit_panel.content.image_url || ""}
-                                alt="Imagem"
-                                className="mt-3 h-24 rounded-md object-cover"
-                              />
-                            )}
-                          </div>
-                        )}
-                        {saldoConfig.deposit_panel.message_style === "container" && (
-                          <div>
-                            <div className="text-sm text-muted-foreground">
-                              {saldoConfig.deposit_panel.container.content}
-                            </div>
-                            <div className="flex gap-2 mt-3">
-                              {(saldoContainerImagePreview || saldoConfig.deposit_panel.container.image_url) && (
-                                <img
-                                  src={saldoContainerImagePreview || saldoConfig.deposit_panel.container.image_url || ""}
-                                  alt="Imagem"
-                                  className="h-24 rounded-md object-cover"
-                                />
-                              )}
-                              {(saldoContainerThumbPreview || saldoConfig.deposit_panel.container.thumbnail_url) && (
-                                <img
-                                  src={saldoContainerThumbPreview || saldoConfig.deposit_panel.container.thumbnail_url || ""}
-                                  alt="Thumbnail"
-                                  className="h-24 w-24 rounded-md object-cover"
-                                />
-                              )}
-                            </div>
-                          </div>
-                        )}
+                      {/* Save footer */}
+                      <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+                        <GlassButton size="sm" variant="primary" onClick={handleSaldoSave} disabled={saldoSaving}>
+                          {saldoSaving ? "Salvando..." : "Salvar Alteracoes"}
+                        </GlassButton>
                       </div>
                     </div>
                   )}
-                </TabsContent>
-
-              <TabsContent value="saldo-admin">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <GlassButton size="sm" onClick={() => setShowSaldoAdd(true)}>
-                      <UserPlus className="w-4 h-4" />
-                      Adicionar saldo
-                    </GlassButton>
-                    <GlassButton size="sm" variant="ghost" onClick={() => setShowSaldoRemove(true)}>
-                      <UserMinus className="w-4 h-4" />
-                      Remover saldo
-                    </GlassButton>
-                    <GlassButton size="sm" variant="ghost" disabled>
-                      <ArrowRightLeft className="w-4 h-4" />
-                      Transferir saldo
-                    </GlassButton>
-                  </div>
-                </div>
+                </GlassCard>
               </TabsContent>
 
-              <TabsContent value="saldo-users">
-                <DataTable
-                    columns={[
-                      {
-                        key: "username",
-                        header: "Cliente",
-                        render: (row) => (
-                          <div className="flex items-center gap-3">
-                            {row.avatar ? (
-                              <img
-                                src={row.avatar}
-                                alt={row.username}
-                                className="w-8 h-8 rounded-full object-cover"
-                              />
-                            ) : (
-                              <div className="w-8 h-8 rounded-full bg-white/10" />
-                            )}
-                            <span className="font-medium">{row.username}</span>
-                          </div>
-                        ),
-                      },
-                      {
-                        key: "balance",
-                        header: "Saldo",
-                        render: (row) => (
-                          <span className="font-medium text-emerald-400">
-                            {formatCurrency(row.balance || 0)}
-                          </span>
-                        ),
-                      },
-                      {
-                        key: "totalDeposited",
-                        header: "Total Depositado",
-                        render: (row) => <span className="font-medium">{formatCurrency(row.total_deposited || 0)}</span>,
-                      },
-                      {
-                        key: "totalUsed",
-                        header: "Total Usado",
-                        render: (row) => <span className="font-medium">{formatCurrency(row.total_used || 0)}</span>,
-                      },
-                      {
-                        key: "lastTx",
-                        header: "Última Mov.",
-                        render: (row) =>
-                          row.last_transaction ? formatDate(new Date(row.last_transaction * 1000).toISOString()) : "—",
-                      },
-                    ]}
-                    data={saldoUsers}
-                    keyExtractor={(row) => row.id}
-                    emptyMessage="Nenhum saldo encontrado"
+              {/* ── Admin ── */}
+              <TabsContent value="saldo-admin">
+                <GlassCard className="p-5" hover={false}>
+                  <SectionHeader
+                    title="Administracao de Saldo"
+                    description="Adicione, remova ou transfira saldo manualmente para usuarios"
                   />
-                </TabsContent>
-
-                <TabsContent value="cashback">
-                  {cashbackConfig && (
-                    <div className="space-y-4">
-                      <div className="flex justify-end">
-                        <GlassButton size="sm" onClick={handleCashbackSave} disabled={cashbackSaving}>
-                          {cashbackSaving ? "Salvando..." : "Salvar"}
-                        </GlassButton>
+                  <div className="grid sm:grid-cols-3 gap-3 mt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowSaldoAdd(true)}
+                      className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors text-left"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                        <UserPlus className="w-5 h-5 text-emerald-400" />
                       </div>
+                      <div>
+                        <p className="text-sm font-medium">Adicionar saldo</p>
+                        <p className="text-xs text-muted-foreground">Creditar saldo a um usuario</p>
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowSaldoRemove(true)}
+                      className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors text-left"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center flex-shrink-0">
+                        <UserMinus className="w-5 h-5 text-red-400" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">Remover saldo</p>
+                        <p className="text-xs text-muted-foreground">Debitar saldo de um usuario</p>
+                      </div>
+                    </button>
+                    <div className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/5 opacity-50 cursor-not-allowed">
+                      <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                        <ArrowRightLeft className="w-5 h-5 text-blue-400" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">Transferir saldo</p>
+                        <p className="text-xs text-muted-foreground">Em breve</p>
+                      </div>
+                    </div>
+                  </div>
+                </GlassCard>
+              </TabsContent>
+
+              {/* ── Users ── */}
+              <TabsContent value="saldo-users">
+                <GlassCard className="p-5" hover={false}>
+                  <SectionHeader
+                    title="Saldos dos Clientes"
+                    description="Visualize os saldos, depositos e movimentacoes de cada cliente"
+                  />
+                  <div className="mt-2">
+                    <DataTable
+                      columns={[
+                        {
+                          key: "username",
+                          header: "Cliente",
+                          render: (row) => (
+                            <div className="flex items-center gap-3">
+                              {row.avatar ? (
+                                <img
+                                  src={row.avatar}
+                                  alt={row.username}
+                                  className="w-8 h-8 rounded-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-8 h-8 rounded-full bg-white/10" />
+                              )}
+                              <span className="font-medium">{row.username}</span>
+                            </div>
+                          ),
+                        },
+                        {
+                          key: "balance",
+                          header: "Saldo",
+                          render: (row) => (
+                            <span className="font-medium text-emerald-400">
+                              {formatCurrency(row.balance || 0)}
+                            </span>
+                          ),
+                        },
+                        {
+                          key: "totalDeposited",
+                          header: "Total Depositado",
+                          render: (row) => <span className="font-medium">{formatCurrency(row.total_deposited || 0)}</span>,
+                        },
+                        {
+                          key: "totalUsed",
+                          header: "Total Usado",
+                          render: (row) => <span className="font-medium">{formatCurrency(row.total_used || 0)}</span>,
+                        },
+                        {
+                          key: "lastTx",
+                          header: "Ultima Mov.",
+                          render: (row) =>
+                            row.last_transaction ? formatDate(new Date(row.last_transaction * 1000).toISOString()) : "---",
+                        },
+                      ]}
+                      data={saldoUsers}
+                      keyExtractor={(row) => row.id}
+                      emptyMessage="Nenhum saldo encontrado"
+                    />
+                  </div>
+                </GlassCard>
+              </TabsContent>
+
+              {/* ── Cashback ── */}
+              <TabsContent value="cashback">
+                <GlassCard className="p-5" hover={false}>
+                  <SectionHeader
+                    title="Cashback"
+                    description="Configure o sistema de cashback para compras na loja"
+                  />
+                  {cashbackConfig && (
+                    <div className="space-y-6 mt-2">
                       <SettingsRow
                         label="Cashback ativo"
                         description="Necessita sistema de saldo ativo"
@@ -2172,126 +2349,158 @@ export default function StorePage() {
                           />
                         }
                       />
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Porcentagem padrão</label>
-                          <input
-                            type="number"
-                            step="0.1"
-                            value={cashbackConfig.default_percentage}
-                            onChange={(e) =>
-                              setCashbackConfig((prev) =>
-                                prev ? { ...prev, default_percentage: Number(e.target.value) } : prev
-                              )
-                            }
-                            className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Cashback máximo (R$)</label>
-                          <input
-                            type="number"
-                            step="0.01"
-                            value={cashbackConfig.max_cashback ?? ""}
-                            onChange={(e) =>
-                              setCashbackConfig((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      max_cashback: e.target.value ? Number(e.target.value) : null,
-                                    }
-                                  : prev
-                              )
-                            }
-                            className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="text-sm font-medium">Regras por cargo</div>
-                        {cashbackConfig.rules.length === 0 && (
-                          <div className="text-sm text-muted-foreground">Nenhuma regra configurada.</div>
-                        )}
-                        {cashbackConfig.rules.map((rule) => (
-                          <div key={rule.role_id} className="flex items-center justify-between text-sm">
-                            <span>{rule.role_name || rule.role_id}</span>
-                            <div className="flex items-center gap-2">
-                              <span>{rule.multiplier}x</span>
-                              <GlassButton
-                                size="sm"
-                                variant="ghost"
-                                onClick={() =>
-                                  setCashbackConfig((prev) =>
-                                    prev
-                                      ? { ...prev, rules: prev.rules.filter((r) => r.role_id !== rule.role_id) }
-                                      : prev
-                                  )
-                                }
-                              >
-                                Remover
-                              </GlassButton>
-                            </div>
-                          </div>
-                        ))}
-                        <div className="grid gap-3 md:grid-cols-2">
-                          <div>
-                            <label className="text-sm font-medium mb-2 block">Cargo</label>
-                            <GlassSelect value={cashbackRuleRoleId} onValueChange={setCashbackRuleRoleId}>
-                              <GlassSelectTrigger>
-                                <GlassSelectValue placeholder="Selecione um cargo" />
-                              </GlassSelectTrigger>
-                              <GlassSelectContent>
-                                {roles.map((role) => (
-                                  <GlassSelectItem key={role.id} value={role.id}>
-                                    {role.name}
-                                  </GlassSelectItem>
-                                ))}
-                              </GlassSelectContent>
-                            </GlassSelect>
-                          </div>
-                          <div>
-                            <label className="text-sm font-medium mb-2 block">Multiplicador</label>
+
+                      <CollapsibleSection icon={CreditCard} title="Configuracoes Gerais" description="Porcentagem padrao e limite maximo" defaultOpen>
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Porcentagem padrao</label>
                             <input
                               type="number"
                               step="0.1"
-                              value={cashbackRuleMultiplier}
-                              onChange={(e) => setCashbackRuleMultiplier(e.target.value)}
+                              value={cashbackConfig.default_percentage}
+                              onChange={(e) =>
+                                setCashbackConfig((prev) =>
+                                  prev ? { ...prev, default_percentage: Number(e.target.value) } : prev
+                                )
+                              }
+                              className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">Cashback maximo (R$)</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={cashbackConfig.max_cashback ?? ""}
+                              onChange={(e) =>
+                                setCashbackConfig((prev) =>
+                                  prev
+                                    ? {
+                                        ...prev,
+                                        max_cashback: e.target.value ? Number(e.target.value) : null,
+                                      }
+                                    : prev
+                                )
+                              }
                               className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
                             />
                           </div>
                         </div>
-                        <div>
-                          <GlassButton
-                            size="sm"
-                            onClick={() => {
-                              const role = roles.find((r) => r.id === cashbackRuleRoleId);
-                              if (!role) return;
-                              const multiplier = Number(cashbackRuleMultiplier || 1);
-                              setCashbackConfig((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      rules: [
-                                        ...prev.rules.filter((r) => r.role_id !== role.id),
-                                        { role_id: role.id, role_name: role.name, multiplier },
-                                      ],
-                                    }
-                                  : prev
-                              );
-                              setCashbackRuleRoleId("");
-                              setCashbackRuleMultiplier("1");
-                            }}
-                            disabled={!cashbackRuleRoleId}
-                          >
-                            Adicionar cargo
-                          </GlassButton>
+                      </CollapsibleSection>
+
+                      <CollapsibleSection icon={Users} title="Regras por Cargo" description="Multiplicadores de cashback por cargo">
+                        <div className="space-y-3">
+                          {cashbackConfig.rules.length === 0 ? (
+                            <div className="rounded-xl border border-dashed border-white/10 p-6 text-center">
+                              <p className="text-sm text-muted-foreground">Nenhuma regra configurada.</p>
+                              <p className="text-xs text-muted-foreground mt-1">Adicione cargos abaixo para criar multiplicadores de cashback.</p>
+                            </div>
+                          ) : (
+                            <div className="space-y-2">
+                              {cashbackConfig.rules.map((rule) => (
+                                <div
+                                  key={rule.role_id}
+                                  className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/5"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center">
+                                      <Users className="w-4 h-4 text-muted-foreground" />
+                                    </div>
+                                    <span className="text-sm font-medium">{rule.role_name || rule.role_id}</span>
+                                  </div>
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-sm font-medium text-emerald-400">{rule.multiplier}x</span>
+                                    <GlassButton
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() =>
+                                        setCashbackConfig((prev) =>
+                                          prev
+                                            ? { ...prev, rules: prev.rules.filter((r) => r.role_id !== rule.role_id) }
+                                            : prev
+                                        )
+                                      }
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </GlassButton>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          <div className="pt-3 border-t border-white/5">
+                            <p className="text-xs text-muted-foreground mb-3">Adicionar novo cargo</p>
+                            <div className="grid gap-3 md:grid-cols-2">
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium">Cargo</label>
+                                <GlassSelect value={cashbackRuleRoleId} onValueChange={setCashbackRuleRoleId}>
+                                  <GlassSelectTrigger>
+                                    <GlassSelectValue placeholder="Selecione um cargo" />
+                                  </GlassSelectTrigger>
+                                  <GlassSelectContent>
+                                    {roles.map((role) => (
+                                      <GlassSelectItem key={role.id} value={role.id}>
+                                        {role.name}
+                                      </GlassSelectItem>
+                                    ))}
+                                  </GlassSelectContent>
+                                </GlassSelect>
+                              </div>
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium">Multiplicador</label>
+                                <input
+                                  type="number"
+                                  step="0.1"
+                                  value={cashbackRuleMultiplier}
+                                  onChange={(e) => setCashbackRuleMultiplier(e.target.value)}
+                                  className="w-full px-4 py-3 text-sm rounded-xl bg-white/[0.03] border border-white/10 outline-none focus:border-white/20 transition-colors"
+                                />
+                              </div>
+                            </div>
+                            <div className="flex justify-end mt-3">
+                              <GlassButton
+                                size="sm"
+                                onClick={() => {
+                                  const role = roles.find((r) => r.id === cashbackRuleRoleId);
+                                  if (!role) return;
+                                  const multiplier = Number(cashbackRuleMultiplier || 1);
+                                  setCashbackConfig((prev) =>
+                                    prev
+                                      ? {
+                                          ...prev,
+                                          rules: [
+                                            ...prev.rules.filter((r) => r.role_id !== role.id),
+                                            { role_id: role.id, role_name: role.name, multiplier },
+                                          ],
+                                        }
+                                      : prev
+                                  );
+                                  setCashbackRuleRoleId("");
+                                  setCashbackRuleMultiplier("1");
+                                }}
+                                disabled={!cashbackRuleRoleId}
+                              >
+                                <Plus className="w-4 h-4" />
+                                Adicionar cargo
+                              </GlassButton>
+                            </div>
+                          </div>
                         </div>
+                      </CollapsibleSection>
+
+                      {/* Save footer */}
+                      <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
+                        <GlassButton size="sm" variant="primary" onClick={handleCashbackSave} disabled={cashbackSaving}>
+                          {cashbackSaving ? "Salvando..." : "Salvar Cashback"}
+                        </GlassButton>
                       </div>
                     </div>
                   )}
-                </TabsContent>
+                </GlassCard>
+              </TabsContent>
             </Tabs>
-          </GlassCard>
+          </div>
         </TabsContent>
       </Tabs>
 
